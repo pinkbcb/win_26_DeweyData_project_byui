@@ -1,0 +1,1208 @@
+---
+title: "Driving Insights: Automotive Consumer Analysis with DuckDB and Dewey Data"
+subtitle: "Data Wrangling and Visualization — Course Assignment"
+author: "Michael Merrill | Tristan Farrow | Henrik Harman"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    code-fold: true
+    code-tools: true
+    theme: flatly
+    highlight-style: github
+    self-contained: true
+    code-summary: "Show code"
+execute:
+  warning: false
+  message: false
+  echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+
+```{=html}
+<!-- ============================================================
+     INSTRUCTOR NOTE:
+     This is a combined assignment + solution .qmd file.
+     
+     PART 1  (lines below this block through the horizontal rule)
+     = The student-facing assignment prompt. 
+     Students should complete their work in a SEPARATE .qmd file 
+     modeled on this one.
+     
+     PART 2  (after the horizontal rule)
+     = The fully worked solution walkthrough, suitable for 
+     classroom review and as the Dewey Data showcase example.
+     ============================================================ -->
+```
+
+# Part 1: Assignment Prompt {.tabset .tabset-fade}
+
+------------------------------------------------------------------------
+
+## Background
+
+You have just joined a small automotive market research consultancy as a
+junior data analyst. Your first client — a regional car dealership group
+— wants to understand *who* is buying *what* kind of vehicles, and
+whether demographic patterns (generation, income, gender) map onto brand
+preferences and fuel-type choices, including the ongoing shift toward
+electric vehicles.
+
+Your manager hands you access to two linked datasets from **Dewey
+Data**:
+
+-   **Consumer Profiles** — one row per individual, rich demographic
+    detail (generation, income tier, gender, state, homeownership,
+    education, and much more)
+-   **Auto Ownership** — one row per individual, up to four registered
+    vehicles per person, plus brand affinity scores for major
+    manufacturers
+
+Your job is to download the data, wire it up in DuckDB, wrangle it into
+an analysis-ready shape, and produce a polished multi-panel
+visualization your manager can put in front of the client.
+
+------------------------------------------------------------------------
+
+## Setup Instructions
+
+### Step 1 — Get Your Dewey Data Credentials
+
+Before writing any code, you need two things from your Dewey Data
+account:
+
+1.  **Your API Key** — log in at [deweydata.io](https://deweydata.io),
+    navigate to **Account → API Keys**, and copy your personal key.
+
+2.  **The Folder IDs** for the two datasets — in the Dewey Data file
+    browser, open each dataset folder and copy the folder ID from the
+    URL or folder details panel. You will need:
+
+    -   The **Consumer Profiles** folder ID
+    -   The **Auto Ownership** folder ID
+
+> ⚠️ **Never hard-code your API key directly in your .qmd file.** Store
+> it as an environment variable instead (see Task 1 below). This
+> protects you when pushing to GitHub.
+
+### Step 2 — Mac-Specific Setup
+
+Open your **Terminal** (Applications → Utilities → Terminal) and add
+your API key to your shell environment file so it persists across
+sessions:
+
+``` bash
+# For zsh (default on modern Macs — macOS Catalina and later)
+echo 'export DEWEY_API_KEY="paste-your-key-here"' >> ~/.zshrc
+source ~/.zshrc
+
+# If you are on an older Mac using bash instead
+echo 'export DEWEY_API_KEY="paste-your-key-here"' >> ~/.bash_profile
+source ~/.bash_profile
+```
+
+Verify it worked:
+
+``` bash
+echo $DEWEY_API_KEY
+# Should print your key, not an empty line
+```
+
+You only need to do this **once**. After that, R can read it with
+`Sys.getenv("DEWEY_API_KEY")`.
+
+### Step 2 - Windows specific
+
+Windows stores environment variables differently than Mac. You have two
+options:
+
+**Option A (Recommended) — Set a persistent User Environment Variable
+via System Settings:**
+
+1.  Press **Windows + R**, type `sysdm.cpl`, and hit Enter to open
+    System Properties.
+2.  Go to the **Advanced** tab → click **Environment Variables**.
+3.  Under **User variables** (top section), click **New**.
+4.  Set **Variable name** to `DEWEY_API_KEY` and **Variable value** to
+    your actual key.
+5.  Click OK → OK → OK to save.
+6.  **Restart RStudio** (or any open R sessions) so it picks up the new
+    variable.
+
+Verify it worked by running this in the R console:
+
+``` r
+Sys.getenv("DEWEY_API_KEY")
+# Should print your key, not an empty string ""
+```
+
+**Option B — Use a `.Renviron` file (no system settings needed):**
+
+1.  In RStudio, open the R console and run:
+
+    ``` r
+    usethis::edit_r_environ()
+    ```
+
+    This opens (or creates) a `.Renviron` file in your home directory.
+
+2.  Add this line to the file:
+
+    ```         
+    DEWEY_API_KEY=paste-your-key-here
+    ```
+
+3.  Save the file and restart R (**Session → Restart R** in RStudio).
+
+> ⚠️ **Add `.Renviron` to your `.gitignore`** — never push it to GitHub.
+
+**Finding your file paths on Windows:**
+
+Unlike Mac where paths look like `/Users/yourname/...`, Windows paths
+look like `C:/Users/yourname/...`. In R, always use **forward slashes**
+(`/`) even on Windows — backslashes (`\`) cause problems in R strings.
+
+To find your current working directory path in R:
+
+``` r
+getwd()
+# Example output: "C:/Users/yourname/Documents/my-project"
+```
+
+**If `deweyr` fails because `uvx` is not found on Windows:**
+
+The `deweyr` package uses `uvx` internally. If you get an error about
+`uvx` not being found, run this in your R console to add the typical
+install location to R's PATH for the session:
+
+``` r
+# Common install location when uv is installed via the official installer
+Sys.setenv(PATH = paste(
+  "C:/Users/yourname/AppData/Local/uv/bin",
+  Sys.getenv("PATH"),
+  sep = ";"   # Windows uses semicolons to separate PATH entries
+))
+```
+
+Replace `yourname` with your actual Windows username. You can find your
+username by opening **Command Prompt** and typing `echo %USERNAME%`.
+
+To make this fix permanent, add `uv`'s bin folder to your **User
+Environment Variables** PATH entry using the same System Properties
+dialog from Option A above.
+
+------------------------------------------------------------------------
+
+## Tasks
+
+### Task 1 — Download the Data via `deweyr`
+
+Install and load the `deweyr` package, then use it to download **both**
+datasets from Dewey Data to a local folder. Store your API key and
+folder IDs as environment variables or in a local `.Renviron` file —
+**do not paste them directly into your code**.
+
+Your code should:
+
+a.  Install `deweyr` from GitHub (include this in a chunk with
+    `eval: false` so it does not re-run on every render)
+b.  Read your API key from the environment using `Sys.getenv()`
+c.  Download the Consumer Profiles dataset to `data/consumer-profiles/`
+d.  Download the Auto Ownership dataset to `data/auto-ownership/`
+e.  Confirm the downloads succeeded by listing the files in each folder
+
+**Hint:** The `dewey_download()` function accepts `api_key`,
+`folder_id`, and `download_path` arguments. See the README for the full
+parameter list including date-partition filtering.
+
+------------------------------------------------------------------------
+
+### Task 2 — Connect DuckDB and Register the Parquet Files
+
+Once the files are downloaded, connect to an in-memory DuckDB database
+and register the parquet files as virtual tables — without loading them
+fully into R memory.
+
+Your code should:
+
+a.  Load `duckdb` and `DBI` and open an in-memory connection
+b.  Use a SQL `CREATE VIEW` statement to register the Consumer Profiles
+    parquet file(s) as a view called `profiles`
+c.  Do the same for the Auto Ownership parquet file(s) as a view called
+    `auto`
+d.  Run a quick `SELECT * FROM profiles LIMIT 5` and
+    `SELECT * FROM auto LIMIT 5` to confirm both views are accessible
+e.  Use `duckplyr` to pull each view into R as a tibble for downstream
+    wrangling
+
+**Hint:** If there are multiple parquet files in a folder (Dewey Data
+sometimes partitions large datasets), DuckDB can read them all at once
+with a glob pattern: `read_parquet('data/auto-ownership/*.parquet')`
+
+**File path note (Mac):** The path inside `read_parquet()` is relative
+to your `.qmd` file's location. If you saved downloads to your Mac's
+Downloads folder you can use the full path:
+`read_parquet('/Users/your-mac-username/Downloads/dewey-downloads/auto-ownership/*.parquet')`
+You can also find your exact path in Terminal by running `pwd` inside
+the data folder.
+
+------------------------------------------------------------------------
+
+### Task 3 — Decode and Wrangle the Data
+
+Both datasets use coded values for categorical variables. Before you can
+analyze anything meaningfully, you need to decode the most important
+ones. You will also need to reshape the Auto Ownership dataset, which
+stores up to four vehicles per person in wide format (`make1`, `make2`,
+`make3`, `make4`, etc.).
+
+**3a. Decode the following columns in the Consumer Profiles dataset:**
+
+| Column | Code → Label |
+|----------------------------|--------------------------------------------|
+| `generation_grpcd` | B = Baby Boomer, X = Gen X, M = Millennial, S = Silent Generation |
+| `gender` | M = Male, F = Female |
+| `ehi_v2` (estimated household income) | A = Under \$20K, B = \$20–\$29K, C = \$30–\$39K, D = \$40–\$49K, E = \$50–\$59K, F = \$60–\$74K, G = \$75–\$99K, H = \$100–\$124K, I = \$125–\$149K, J = \$150–\$174K, K = \$175–\$199K, L = \$200–\$249K, M = \$250K+ |
+| `homeownercd` | H = Homeowner, R = Renter, U = Unknown |
+| `educationcd` | A = Less than HS, B = HS Graduate, C = Some College, F = College Graduate |
+
+**3b. Decode the following columns in the Auto Ownership dataset:**
+
+| Column | Code → Label |
+|----------------------------|--------------------------------------------|
+| `fueltypecd1` | G = Gasoline, F = Flex Fuel, B = Battery Electric (EV), D = Diesel, H = Hybrid |
+
+**3c. Pivot the Auto Ownership dataset from wide to long format** so
+that each row represents one vehicle (not one person). After pivoting, a
+person with three registered vehicles should appear as three rows. Your
+long-format table should have at minimum: `pid`, `vehicle_slot` (1–4),
+`make`, `model`, `year`, `fuel_type`, `veh_class`, `style`.
+
+**3d. Join** the decoded long-format vehicle table to the decoded
+consumer profiles table on `pid`, keeping only rows where both datasets
+have a match.
+
+------------------------------------------------------------------------
+
+### Task 4 — Query with DuckDB SQL
+
+Write the following queries using **raw SQL** via `DBI::dbGetQuery()`
+against your DuckDB connection. Do not use dplyr for these — the point
+is to practice SQL directly.
+
+**Query A:** How many vehicles of each `veh_class` are in the dataset?
+Order by count descending.
+
+**Query B:** What is the average `in_market_new_score` by
+`generation_grpcd`? Only include rows where the score is not NULL. Round
+to 2 decimal places.
+
+**Query C:** Among vehicles where `fueltypecd1` is Battery Electric
+(EV), what are the top 5 most common makes? Return make and count.
+
+**Query D:** Write a query that shows the breakdown of fuel type
+(`fueltypecd1`) by generation. Your result should have one row per
+generation/fuel-type combination, with a column for count and a column
+for the percentage of that generation's vehicles that fuel type
+represents. Round percentage to 1 decimal place.
+
+------------------------------------------------------------------------
+
+### Task 5 — duckplyr Wrangling
+
+Now use `duckplyr` — which lets you write familiar `dplyr`-style code
+that executes via DuckDB under the hood — to answer the following.
+Reference the [duckplyr basics
+guide](https://pdsr.rtemis.org/duckplyrBasics) as needed.
+
+**5a.** Using `filter()` and `summarize()` with `.by`, find the mean
+`suv_affinity` and `truck_affinity` score by generation. Arrange the
+result by generation.
+
+**5b.** Using `mutate()`, create a new column called `is_ev` that is
+`TRUE` when `fueltypecd1 == "B"` (Battery Electric) and `FALSE`
+otherwise. Then use `count()` grouped by `generation` and `is_ev` to
+summarize EV adoption by generation.
+
+**5c.** Using `slice_max()`, find the single individual (by `pid`) with
+the highest `in_market_new_score` in each generation group. What
+vehicles do they own?
+
+------------------------------------------------------------------------
+
+### Task 6 — Multi-Panel Visualization
+
+Using `ggplot2`, create a **single multi-panel figure** (using
+`patchwork` or `facet_wrap`) that tells a coherent story about
+automotive consumer behavior from this dataset. Your figure must include
+**at least three panels** and address at least two of the following
+angles:
+
+-   Vehicle class or style preferences by generation
+-   EV / fuel type adoption patterns (overall or by demographic group)
+-   Brand affinity scores across demographic segments
+-   Income tier and vehicle class or brand relationships
+
+Requirements:
+
+-   Each panel must have a clear, informative title
+-   Axes must be labeled (no raw column name defaults)
+-   Use a consistent, clean theme across all panels
+-   Include a figure caption (use Quarto's `#| fig-cap:` chunk option)
+    summarizing the overall story in 1–2 sentences
+-   Color palettes must be accessible (consider `scale_fill_viridis_d()`
+    or `ggthemes`)
+
+------------------------------------------------------------------------
+
+### Task 7 — Written Summary
+
+Write **two paragraphs** directly in your .qmd (not as a code comment)
+summarizing:
+
+1.  What you found — the key patterns in the data and what they suggest
+    about the dealership client's target segments
+2.  What you would want to explore next with a larger pull of this data,
+    and what limitations the sample size imposes on your current
+    conclusions
+
+------------------------------------------------------------------------
+
+### Submission
+
+Render your `.qmd` file to HTML. Push the following files to your GitHub
+repository:
+
+-   `your-name-dewey-automotive.qmd`
+-   `your-name-dewey-automotive.html`
+-   `your-name-dewey-automotive.md` (if generated)
+
+> ⚠️ **Do NOT push your `data/` folder or any parquet files to GitHub.**
+> Add `data/` to your `.gitignore` file. Your API key must never appear
+> in any pushed file.
+
+Submit a link to the `.html` file on GitHub via I-Learn.
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+# Part 2: Solution Walkthrough {.tabset .tabset-fade}
+
+> This section presents a fully worked solution to the assignment above.
+> It is intended for classroom review and as a reference example for
+> practitioners exploring Dewey Data with R, DuckDB, and duckplyr. Code
+> is annotated throughout to explain the reasoning behind each step.
+
+------------------------------------------------------------------------
+
+## 0 — Package Setup
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+#This code might be good, but I am running into some errors right now
+#knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, error = TRUE)
+
+# Install deweyr from GitHub (run once — eval: false in production)
+# install.packages("devtools")
+# devtools::install_github("Coxabc/deweyr")
+
+library(deweyr)       # Dewey Data download wrapper
+library(duckdb)       # DuckDB database engine
+library(DBI)          # Database interface (standard R DB layer)
+library(duckplyr)     # dplyr-syntax interface to DuckDB
+library(tidyverse)    # dplyr, tidyr, ggplot2, stringr, etc.
+library(patchwork)    # Multi-panel ggplot2 composition
+```
+
+------------------------------------------------------------------------
+
+## 1 — Downloading the Data
+
+### 1a. API Key and Folder IDs
+
+Your API key lives in your environment, never in your code. On a Mac,
+you added it to `~/.zshrc` during setup (see Part 1 instructions). R
+reads it at runtime like this:
+
+```{r}
+#| label: credentials
+#| eval: false   # <-- set eval: true once your key is configured
+
+# ── WHERE TO PUT YOUR CREDENTIALS ──────────────────────────────────────────
+#
+#  OPTION A (recommended): Environment variable set in ~/.zshrc (Mac)
+#    Already done during setup. Just use Sys.getenv() below.
+#
+#  OPTION B: .Renviron file in your project root
+#    Create a file called .Renviron (no extension) in your project folder.
+#    Add these two lines to it — then restart R:
+#
+#      DEWEY_API_KEY=paste-your-api-key-here
+#
+#    R loads .Renviron automatically on startup.
+#    ADD .Renviron TO YOUR .gitignore — never push it to GitHub.
+#
+# ───────────────────────────────────────────────────────────────────────────
+
+api_key <- Sys.getenv("DEWEY_API_KEY")
+
+# ── FOLDER IDs ──────────────────────────────────────────────────────────────
+#  Find these in the Dewey Data file browser:
+#  1. Log in at deweydata.io
+#  2. Navigate to the dataset folder
+#  3. Copy the folder ID from the URL or the folder details panel
+#
+#  Replace the placeholders below with your actual folder IDs:
+
+folder_id_profiles <- "https://api.deweydata.io/api/v1/external/data/prj_ry8qacnd__cdst_gkqw4ccfiduozhia" # Consumer profile folder, this one happens to be filtered to Utah, Idaho and California
+folder_id_auto     <- "https://api.deweydata.io/api/v1/external/data/prj_ry8qacnd__cdst_6vgodnvf8johkhbk" # Auto ownership folder, this one happens to be filtered down too a few common domestic and foreign brands
+```
+
+Run this in the console if it says that uvx is not found, this was
+specifically for my Mac:
+
+Sys.setenv(PATH = paste("/Users/mckennahudson/.local/bin",
+Sys.getenv("PATH"), sep = ":"))
+
+```{r}
+#| output: false      # shows code but hides output
+#| eval: false
+#| include: false    #maybe I will take this include part out as long as it doesn't mess up the render
+# Step 1: Set up your credentials
+api_key            <- Sys.getenv("DEWEY_API_KEY")
+folder_id_auto     <- "https://api.deweydata.io/api/v1/external/data/prj_ry8qacnd__cdst_6vgodnvf8johkhbk"      # paste your real folder ID
+folder_id_profiles <- "https://api.deweydata.io/api/v1/external/data/prj_ry8qacnd__cdst_gkqw4ccfiduozhia"   # paste your real folder ID
+
+# Step 2: Create destination folders inside your working directory
+dir.create("data/auto-ownership",    recursive = TRUE, showWarnings = FALSE)
+dir.create("data/consumer-profiles", recursive = TRUE, showWarnings = FALSE)
+
+# Step 3: Download auto ownership
+# Technically I don't need to run these lines anymore ebcuase now the files are safely saved on my drive
+download_dewey(
+  api_key       = api_key,
+  folder_id     = folder_id_auto,
+  download_path = "/Users/mckennahudson/DS488_DS_Consulting/data/auto-ownership"
+)
+
+# Step 4: Download consumer profiles
+download_dewey(
+  api_key       = api_key,
+  folder_id     = folder_id_profiles,
+  download_path = "/Users/mckennahudson/DS488_DS_Consulting/data/consumer-profiles"
+)
+
+
+#Step 5
+# Check using the full absolute path instead
+list.files("/Users/mckennahudson/DS488_DS_Consulting/data/auto-ownership", 
+           recursive = TRUE)
+
+list.files("/Users/mckennahudson/DS488_DS_Consulting/data/consumer-profiles", 
+           recursive = TRUE)
+```
+
+
+
+------------------------------------------------------------------------
+
+## 2 — Connect DuckDB and Register Parquet Files
+
+After `dewey_download()` runs, your parquet files will be sitting in the
+two local folders you created. DuckDB can read them directly off disk —
+no need to load them into R memory first. This is one of DuckDB's
+biggest advantages: you can query files that are far larger than your
+available RAM.
+
+```{r}
+#| label: duckdb-connect
+#| output: false      # shows code but hides output
+
+# Open an in-memory DuckDB connection
+# (DuckDB handles the file I/O itself — "in-memory" just means no separate DB file)
+con <- dbConnect(duckdb())
+
+# ── Register parquet files as DuckDB views ──────────────────────────────────
+#
+# The glob pattern *.parquet picks up ALL parquet files in a folder at once.
+# Dewey Data sometimes splits large datasets across multiple partitioned files —
+# the glob handles that automatically.
+#
+# IMPORTANT: these paths are relative to your .qmd file's location.
+# If your .qmd is at ~/Documents/my-project/analysis.qmd, then
+# "data/consumer-profiles/*.parquet" resolves to
+# ~/Documents/my-project/data/consumer-profiles/*.parquet
+#
+# Adjust the paths below if you saved your files to a different location.
+# For example, if you used an absolute path like /Users/yourname/Downloads/dewey-downloads/
+# just paste that full path in place of "data/consumer-profiles".
+
+# Register auto ownership
+dbExecute(con, "
+  CREATE VIEW auto AS
+  SELECT * FROM read_parquet('/Users/mckennahudson/DS488_DS_Consulting/data/auto-ownership/auto-ownership-domestic-foreign-brands/*.snappy.parquet')
+")
+
+# Register consumer profiles
+dbExecute(con, "
+  CREATE VIEW profiles AS
+  SELECT * FROM read_parquet('/Users/mckennahudson/DS488_DS_Consulting/data/consumer-profiles/idaho-utah-california-consumer-profile/*.snappy.parquet')
+")
+
+# Confirm both work
+dbGetQuery(con, "SELECT * FROM auto LIMIT 3")
+dbGetQuery(con, "SELECT * FROM profiles LIMIT 3")
+```
+
+Ok, now I will check that the data is good
+
+```{r}
+#| output: false      # shows code but hides output
+
+# See exact column names as they appear in the real data (uppercase)
+dbGetQuery(con, "SELECT column_name FROM information_schema.columns 
+                 WHERE table_name = 'auto' LIMIT 20")
+
+dbGetQuery(con, "SELECT column_name FROM information_schema.columns 
+                 WHERE table_name = 'profiles' 
+                 AND column_name IN ('PID','GENDER','GENERATION_GRPCD',
+                                     'EHI_V2','STATE','AGE','HOMEOWNERCD',
+                                     'EDUCATIONCD','WEALTHSCR_V2')")
+```
+
+Then join and filter within duck db before trying to pull into R
+
+```{r}
+#| output: false      # shows code but hides output
+
+
+
+# Do the heavy join inside DuckDB — only pull key columns into R
+# This avoids loading 300+ columns x 12M rows into memory
+vehicles <- dbGetQuery(con, "
+  SELECT 
+    a.PID,
+    a.MAKE1, a.MAKE2, a.MAKE3, a.MAKE4,
+    a.MODEL1, a.MODEL2, a.MODEL3, a.MODEL4,
+    a.YEAR1, a.YEAR2, a.YEAR3, a.YEAR4,
+    a.FUELTYPECD1, a.FUELTYPECD2, a.FUELTYPECD3, a.FUELTYPECD4,
+    a.VEH_CLASS1, a.VEH_CLASS2, a.VEH_CLASS3, a.VEH_CLASS4,
+    a.STYLECD1, a.STYLECD2, a.STYLECD3, a.STYLECD4,
+    a.SUV_AFFINITY, a.TRUCK_AFFINITY, a.SEDAN_AFFINITY,
+    a.HYBRID_AFFINITY, a.TOYOTA_AFFINITY, a.FORD_AFFINITY,
+    a.HONDA_AFFINITY, a.CHEVROLET_AFFINITY,
+    a.IN_MARKET_NEW_SCORE, a.IN_MARKET_USED_SCORE,
+    p.GENDER, p.GENERATION_GRPCD, p.EHI_V2,
+    p.STATE, p.AGE, p.HOMEOWNERCD, p.EDUCATIONCD,
+    p.WEALTHSCR_V2, p.MARRIEDCD
+  FROM auto a
+  INNER JOIN profiles p ON a.PID = p.PID
+") |> as_tibble()
+
+# How many matched?
+nrow(vehicles)
+n_distinct(vehicles$PID)
+
+```
+
+------------------------------------------------------------------------
+
+## 3 — Decode and Wrangle the Data
+
+### 3a–3b. Decode Categorical Codes
+
+The datasets use compact letter codes for categorical variables. We
+decode the most important ones up front so that all downstream analysis
+and visualizations use human-readable labels.
+
+```{r}
+#| label: decode-profiles
+#| output: false      # shows code but hides output
+
+generation_labels <- c(
+  "S" = "Silent Generation",
+  "B" = "Baby Boomer", 
+  "X" = "Gen X",
+  "M" = "Millennial"
+)
+
+income_labels <- c(
+  "A" = "Under $20K", "B" = "$20-29K", "C" = "$30-39K",
+  "D" = "$40-49K",   "E" = "$50-59K", "F" = "$60-74K",
+  "G" = "$75-99K",   "H" = "$100-124K","I" = "$125-149K",
+  "J" = "$150-174K", "K" = "$175-199K","L" = "$200-249K",
+  "M" = "$250K+"
+)
+
+fuel_labels <- c(
+  "G" = "Gasoline", "F" = "Flex Fuel",
+  "B" = "Battery Electric", "D" = "Diesel", "H" = "Hybrid"
+)
+
+vehicles_clean <- vehicles |>
+  mutate(
+    generation  = generation_labels[GENERATION_GRPCD],
+    generation  = factor(generation, levels = generation_labels),
+    gender      = case_when(GENDER == "M" ~ "Male",
+                            GENDER == "F" ~ "Female",
+                            TRUE ~ NA_character_),
+    income_tier = income_labels[EHI_V2],
+    income_tier = factor(income_tier, levels = income_labels, ordered = TRUE),
+    fuel_type1  = fuel_labels[FUELTYPECD1],
+    is_ev       = FUELTYPECD1 == "B",
+    across(c(SUV_AFFINITY, TRUCK_AFFINITY, SEDAN_AFFINITY,
+             HYBRID_AFFINITY, IN_MARKET_NEW_SCORE), as.numeric)
+  )
+
+glimpse(vehicles_clean)
+```
+
+Pivot to long format so that now there will only be one vehicle per row:
+
+```{r}
+#| label: Pivot long
+#| output: false      # shows code but hides output
+
+vehicles_long <- vehicles_clean |>
+  pivot_longer(
+    cols = matches("^(MAKE|MODEL|YEAR|FUELTYPECD|VEH_CLASS|STYLECD)[1-4]$"),
+    names_to  = c(".value", "slot"),
+    names_pattern = "^([A-Z_]+?)([1-4])$"
+  ) |>
+  rename(
+    make       = MAKE,
+    model      = MODEL,
+    year       = YEAR,
+    fuel_code  = FUELTYPECD,
+    veh_class  = VEH_CLASS,
+    style      = STYLECD
+  ) |>
+  mutate(
+    fuel_type = fuel_labels[fuel_code],
+    is_ev     = fuel_code == "B",
+    year      = as.integer(year)
+  ) |>
+  filter(!is.na(make))
+
+cat("Total vehicles (long):", nrow(vehicles_long), "\n")
+cat("Unique owners:        ", n_distinct(vehicles_long$PID), "\n")
+count(vehicles_long, slot)
+```
+
+So now we are building the plots
+
+```{r}
+library(patchwork)
+
+# ── Shared theme ────────────────────────────────────────────────────────────
+theme_dewey <- theme_minimal(base_size = 11) +
+  theme(
+    plot.title       = element_text(face = "bold", size = 11),
+    plot.subtitle    = element_text(size = 9, color = "gray40"),
+    axis.title       = element_text(size = 9),
+    legend.position  = "bottom",
+    legend.title     = element_text(size = 8),
+    legend.text      = element_text(size = 8),
+    panel.grid.minor = element_blank()
+  )
+
+gen_colors <- c(
+  "Silent Generation" = "#4e79a7",
+  "Baby Boomer"       = "#f28e2b",
+  "Gen X"             = "#59a14f",
+  "Millennial"        = "#e15759"
+)
+
+# ── Panel 1 — Top vehicle classes by generation ─────────────────────────────
+p1_data <- vehicles_long |>
+  filter(!is.na(generation), !is.na(veh_class)) |>
+  count(generation, veh_class) |>
+  group_by(generation) |>
+  mutate(pct = n / sum(n)) |>
+  ungroup() |>
+  group_by(generation) |>
+  slice_max(pct, n = 5) |>
+  ungroup()
+
+p1 <- ggplot(p1_data,
+             aes(x = reorder(veh_class, pct),
+                 y = pct,
+                 fill = generation)) +
+  geom_col(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_fill_manual(values = gen_colors) +
+  coord_flip() +
+  facet_wrap(~ generation, nrow = 1) +
+  labs(
+    title    = "Top Vehicle Classes by Generation",
+    subtitle = "Share of each generation's registered vehicles",
+    x        = NULL,
+    y        = "Share of vehicles"
+  ) +
+  theme_dewey
+
+# ── Panel 2 — Fuel type by generation ───────────────────────────────────────
+p2_data <- vehicles_long |>
+  filter(!is.na(generation), !is.na(fuel_type)) |>
+  count(generation, fuel_type) |>
+  group_by(generation) |>
+  mutate(pct = n / sum(n)) |>
+  ungroup()
+
+p2 <- ggplot(p2_data,
+             aes(x = generation, y = pct, fill = fuel_type)) +
+  geom_col(position = "fill", width = 0.65) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_viridis_d(option = "plasma", name = "Fuel Type", direction = -1) +
+  labs(
+    title    = "Fuel Type Mix by Generation",
+    subtitle = "Share of each generation's vehicles by fuel type",
+    x        = NULL,
+    y        = "Share of vehicles"
+  ) +
+  theme_dewey +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+# ── Panel 3 — EV ownership by state (top 10 states) ─────────────────────────
+p3_data <- vehicles_long |>
+  filter(!is.na(STATE), !is.na(fuel_type)) |>
+  group_by(STATE) |>
+  summarize(
+    pct_ev = mean(fuel_code == "B", na.rm = TRUE),
+    n      = n(),
+    .groups = "drop"
+  ) |>
+  filter(n > 1000) |>
+  slice_max(pct_ev, n = 10)
+
+p3 <- ggplot(p3_data,
+             aes(x = reorder(STATE, pct_ev), y = pct_ev)) +
+  geom_col(fill = "#4e79a7", width = 0.65) +
+  geom_text(aes(label = scales::percent(pct_ev, accuracy = 0.1)),
+            hjust = -0.1, size = 3) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1),
+                     expand = expansion(mult = c(0, 0.15))) +
+  coord_flip() +
+  labs(
+    title    = "EV Ownership Rate by State",
+    subtitle = "States with 1,000+ vehicles in dataset",
+    x        = NULL,
+    y        = "Share of Battery Electric vehicles"
+  ) +
+  theme_dewey
+
+# ── Combine ──────────────────────────────────────────────────────────────────
+combined <- (p1 / (p2 | p3)) +
+  plot_annotation(
+    title   = "Who Drives What? Automotive Consumer Insights — Idaho, Utah & California",
+    caption = "Source: Dewey Data — Consumer Profiles & Auto Ownership | n = 491,764 matched records",
+    theme   = theme(
+      plot.title   = element_text(size = 14, face = "bold"),
+      plot.caption = element_text(size = 8, color = "gray50")
+    )
+  )
+
+combined
+```
+
+I THOUGHT I WAS DONE HERE AT LINE 709
+
+------------------------------------------------------------------------
+
+## 4 — Query with DuckDB SQL
+
+We register the wrangled data back into DuckDB and write raw SQL
+queries. This mirrors what you would do in a production pipeline
+querying large parquet files.
+
+```{r}
+#| label: register-wrangled
+
+# Write the wrangled + joined tibble back into DuckDB as a table for SQL querying.
+# (It came FROM DuckDB via parquet → we wrangled it in R → now we push it back
+#  so we can practice raw SQL against it in Tasks 4 and 5.)
+dbWriteTable(con, "vehicles", vehicles, overwrite = TRUE)
+```
+
+**Query A — Vehicle class counts:**
+
+```{r}
+#| label: sql-query-a
+
+dbGetQuery(con, "
+  SELECT VEH_CLASS1 AS vehicle_class,
+         COUNT(*) AS n_vehicles
+  FROM   auto
+  WHERE  VEH_CLASS1 IS NOT NULL
+  GROUP  BY VEH_CLASS1
+  ORDER  BY n_vehicles DESC
+")
+```
+
+**Query B — Average in-market new score by generation:**
+
+```{r}
+#| label: sql-query-b
+
+dbGetQuery(con, "
+  SELECT p.GENERATION_GRPCD AS generation,
+         ROUND(AVG(a.IN_MARKET_NEW_SCORE), 2) AS avg_new_score,
+         COUNT(*) AS n
+  FROM   auto a
+  JOIN   profiles p ON a.PID = p.PID
+  WHERE  a.IN_MARKET_NEW_SCORE IS NOT NULL
+    AND  p.GENERATION_GRPCD IS NOT NULL
+  GROUP  BY p.GENERATION_GRPCD
+  ORDER  BY avg_new_score DESC
+")
+```
+
+**Query C — Top 5 EV makes:**
+
+```{r}
+#| label: sql-query-c
+
+dbGetQuery(con, "
+  SELECT MAKE1 AS make,
+         COUNT(*) AS n_ev_vehicles
+  FROM   auto
+  WHERE  FUELTYPECD1 = 'B'
+  GROUP  BY MAKE1
+  ORDER  BY n_ev_vehicles DESC
+  LIMIT  5
+")
+```
+
+**Query D — Fuel type breakdown by generation:**
+
+```{r}
+#| label: sql-query-d
+
+dbGetQuery(con, "
+  WITH gen_totals AS (
+    SELECT p.GENERATION_GRPCD AS generation,
+           COUNT(*) AS total_in_gen
+    FROM   auto a
+    JOIN   profiles p ON a.PID = p.PID
+    WHERE  p.GENERATION_GRPCD IS NOT NULL
+    GROUP  BY p.GENERATION_GRPCD
+  ),
+  fuel_counts AS (
+    SELECT p.GENERATION_GRPCD AS generation,
+           a.FUELTYPECD1      AS fuel_type_code,
+           COUNT(*) AS n
+    FROM   auto a
+    JOIN   profiles p ON a.PID = p.PID
+    WHERE  p.GENERATION_GRPCD IS NOT NULL
+      AND  a.FUELTYPECD1      IS NOT NULL
+    GROUP  BY p.GENERATION_GRPCD, a.FUELTYPECD1
+  )
+  SELECT fc.generation,
+         fc.fuel_type_code,
+         fc.n,
+         ROUND(100.0 * fc.n / gt.total_in_gen, 1) AS pct_of_generation
+  FROM   fuel_counts fc
+  JOIN   gen_totals  gt USING (generation)
+  ORDER  BY fc.generation, fc.n DESC
+")
+```
+
+------------------------------------------------------------------------
+
+## 5 — duckplyr Wrangling
+
+`duckplyr` lets us write familiar dplyr-style pipelines that execute
+inside DuckDB, combining the readability of the tidyverse with the
+performance of columnar query execution.
+
+```{r}
+#| label: duckplyr-setup
+
+# Convert our joined tibble to a duckplyr data frame
+vehicles_dk <- vehicles |> as_duckdb_tibble()
+```
+
+**5a — Brand affinity by generation:**
+
+```{r}
+#| label: duckplyr-5a
+
+generation_labels <- c("S"="Silent Generation","B"="Baby Boomer",
+                        "X"="Gen X","M"="Millennial")
+
+vehicles_dk <- vehicles |> as_duckdb_tibble()
+
+affinity_by_gen <- vehicles_dk |>
+  filter(!is.na(GENERATION_GRPCD)) |>
+  mutate(generation = generation_labels[GENERATION_GRPCD]) |>
+  summarize(
+    mean_suv_affinity   = mean(SUV_AFFINITY,  na.rm = TRUE),
+    mean_truck_affinity = mean(TRUCK_AFFINITY, na.rm = TRUE),
+    n = n(),
+    .by = generation
+  ) |>
+  arrange(generation)
+
+affinity_by_gen
+```
+
+**5b — EV adoption by generation:**
+
+```{r}
+#| label: duckplyr-5b
+
+vehicles_long <- vehicles_long |>
+  mutate(
+    generation  = as.character(unname(generation)),
+    income_tier = as.character(unname(income_tier)),
+    fuel_type   = as.character(unname(fuel_type)),
+    fuel_type1  = as.character(unname(fuel_type1))
+  )
+
+vehicles_long_dk <- vehicles_long |>
+  select(-GENDER, -GENERATION_GRPCD, -EHI_V2) |>  # drop raw cols that have decoded equivalents
+  as_duckdb_tibble()
+
+
+ev_by_gen <- vehicles_long_dk |>
+  filter(!is.na(generation)) |>
+  mutate(is_ev = fuel_code == "B") |>
+  count(generation, is_ev) |>
+  mutate(label = if_else(is_ev, "Battery Electric", "Non-EV")) |>
+  arrange(generation, is_ev)
+
+ev_by_gen
+```
+
+**5c — Highest in-market score per generation:**
+
+```{r}
+#| label: duckplyr-5c
+
+top_buyers <- vehicles_long_dk |>
+  filter(!is.na(generation), !is.na(IN_MARKET_NEW_SCORE)) |>
+  slice_max(IN_MARKET_NEW_SCORE, by = generation, n = 1, with_ties = FALSE) |>
+  select(generation, PID, IN_MARKET_NEW_SCORE, make, model, year,
+         fuel_type, veh_class, income_tier) |>
+  arrange(generation)
+
+top_buyers
+```
+
+------------------------------------------------------------------------
+
+## 6 — Multi-Panel Visualization
+
+We build a three-panel figure that tells a unified story: *How do
+generation and income shape the kinds of vehicles Americans own, and
+where does the EV transition stand?*
+
+```{r}
+#| label: vis-prep
+
+# ── Shared theme ────────────────────────────────────────────────────────────
+theme_dewey <- theme_minimal(base_size = 11) +
+  theme(
+    plot.title       = element_text(face = "bold", size = 11),
+    plot.subtitle    = element_text(size = 9, color = "gray40"),
+    axis.title       = element_text(size = 9),
+    legend.position  = "bottom",
+    legend.title     = element_text(size = 8),
+    legend.text      = element_text(size = 8),
+    panel.grid.minor = element_blank(),
+    strip.text       = element_text(face = "bold", size = 9)
+  )
+
+# Generation color palette (colorblind-friendly)
+gen_colors <- c(
+  "Silent Generation" = "#4e79a7",
+  "Baby Boomer"       = "#f28e2b",
+  "Gen X"             = "#59a14f",
+  "Millennial"        = "#e15759"
+)
+```
+
+```{r}
+#| label: panel-1
+#| fig-height: 4
+
+p1_data <- vehicles_long |>
+  filter(!is.na(generation), !is.na(veh_class)) |>
+  count(generation, veh_class) |>
+  group_by(generation) |>
+  mutate(pct = n / sum(n)) |>
+  ungroup()
+
+p1 <- ggplot(p1_data,
+             aes(x = reorder(veh_class, pct, FUN = mean),  # mean across generations for stable order
+                 y = pct,
+                 fill = generation)) +
+  geom_col(position = "dodge", width = 0.7) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_fill_manual(values = gen_colors, name = "Generation") +
+  coord_flip() +
+  labs(
+    title    = "Vehicle Class Preferences by Generation",
+    subtitle = "Proportion of each generation's registered vehicles",
+    x        = NULL,
+    y        = "Share of vehicles"
+  ) +
+  theme_dewey
+```
+
+```{r}
+#| label: panel-2
+#| fig-height: 4
+
+# Panel 2 — Fuel type by generation (stacked 100%)
+p2_data <- vehicles_long |>
+  filter(!is.na(generation), !is.na(fuel_type)) |>
+  count(generation, fuel_type) |>
+  group_by(generation) |>
+  mutate(pct = n / sum(n)) |>
+  ungroup()
+
+p2 <- ggplot(p2_data,
+             aes(x = generation, y = pct, fill = fuel_type)) +
+  geom_col(position = "fill", width = 0.65) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_viridis_d(option = "plasma", name = "Fuel Type", direction = -1) +
+  labs(
+    title    = "Fuel Type Mix by Generation",
+    subtitle = "100% stacked — share of each generation's vehicles by fuel type",
+    x        = NULL,
+    y        = "Share of vehicles"
+  ) +
+  theme_dewey +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+```
+
+```{r}
+#| label: panel-3
+#| fig-height: 4
+
+# Panel 3 — SUV vs Truck affinity scores by income tier
+# Use only the person-level data (one row per pid) to avoid double-counting
+income_order <- c("Under $20K","$20-29K","$30-39K","$40-49K","$50-59K",
+                  "$60-74K","$75-99K","$100-124K","$125-149K",
+                  "$150-174K","$175-199K","$200-249K","$250K+")
+
+p3_data <- vehicles_long |>
+  distinct(PID, .keep_all = TRUE) |>        # one row per person to avoid double-counting
+  filter(!is.na(income_tier)) |>
+  mutate(income_tier = factor(income_tier, levels = income_order)) |>
+  group_by(income_tier) |>
+  summarize(
+    mean_suv   = mean(SUV_AFFINITY,   na.rm = TRUE),
+    mean_truck = mean(TRUCK_AFFINITY, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  pivot_longer(cols = c(mean_suv, mean_truck),
+               names_to  = "affinity_type",
+               values_to = "mean_score") |>
+  mutate(
+    affinity_type = recode(affinity_type,
+                           "mean_suv"   = "SUV Affinity",
+                           "mean_truck" = "Truck Affinity")
+  )
+
+p3 <- ggplot(p3_data,
+             aes(x = income_tier, y = mean_score,
+                 color = affinity_type, group = affinity_type)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_color_manual(values = c("SUV Affinity"   = "#4e79a7",
+                                "Truck Affinity" = "#e15759"),
+                     name = NULL) +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  labs(
+    title    = "SUV vs. Truck Affinity Across Income Tiers",
+    subtitle = "Mean affinity score (1 = low, 4 = high) by estimated household income",
+    x        = "Income Tier",
+    y        = "Mean Affinity Score"
+  ) +
+  theme_dewey
+```
+
+```{r}
+#| label: combined-figure
+#| fig-width: 14
+#| fig-height: 12
+#| fig-cap: "Automotive consumer behavior varies meaningfully across generations and income tiers: SUVs dominate across all cohorts but younger generations show stronger EV signals, while truck and SUV affinity follow distinct income curves. Data: Dewey Data Consumer Profiles + Auto Ownership datasets."
+
+# Compose the three panels with patchwork
+combined <- (p1 / p2 / p3) +
+  plot_annotation(
+    title   = "Who Drives What? Automotive Consumer Insights via Dewey Data",
+    caption = "Source: Dewey Data — Consumer Profiles & Auto Ownership datasets\nAnalysis: Data Wrangling & Visualization Course",
+    theme   = theme(
+      plot.title   = element_text(size = 14, face = "bold"),
+      plot.caption = element_text(size = 8, color = "gray50")
+    )
+  )
+
+combined
+```
+
+------------------------------------------------------------------------
+
+## 7 — Written Summary
+
+### Findings
+
+Even from this sample, several patterns are visible in the Dewey Data
+automotive dataset. SUVs and trucks dominate across all generations, but
+the mix shifts: Baby Boomers and Gen X skew more heavily toward
+full-size trucks and larger SUVs, while Millennials show relatively
+higher representation in the crossover and small-SUV categories. Battery
+Electric vehicles remain a small share of the overall fleet but are
+disproportionately represented among Millennials, consistent with
+broader national trends in EV adoption. The brand affinity scores
+reinforce this story — SUV affinity is relatively stable across income
+tiers, while truck affinity peaks in middle-income households and
+declines at the highest income levels, where luxury-brand SUV and sedan
+affinities tend to be stronger.
+
+### Limitations and Next Steps
+
+The sample here contains 100 individuals per dataset, which is
+sufficient for learning the tools but too small to draw confident
+conclusions about population-level patterns — especially for smaller
+segments like EV owners or the Silent Generation cohort. With a full
+Dewey Data pull (potentially millions of records), the same DuckDB
+pipeline developed here would scale without modification, since DuckDB
+queries parquet files on disk rather than holding everything in R
+memory. The most valuable next steps would be to (1) incorporate
+geographic variables (`state`, `zip`) to explore regional variation in
+EV adoption and vehicle class preference, (2) use the
+`in_market_new_score` and `in_market_used_score` fields to identify
+high-priority prospect segments for the dealership client, and (3) join
+to external census or median-income data at the ZIP level to
+cross-validate the `ehi_v2` income estimates.
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: cleanup
+#| include: false
+
+# Close the DuckDB connection when done
+dbDisconnect(con, shutdown = TRUE)
+```
+
+# References {.tabset .tabset-fade}
+
+## References
+
+InfutorData. (2024). *Consumer Profiles* [Dataset]. Dewey Data. https://doi.org/10.82551/GVTF-Q257
+
+InfutorData. (2024). *Auto Ownership* [Dataset]. Dewey Data. https://doi.org/10.82551/5358-6S46

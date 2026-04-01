@@ -1,0 +1,238 @@
+---
+title: "Using Dewey Data in the Data Science Classroom"
+subtitle: "A guide for professors looking to bring real-world datasets into R-based courses"
+date: today
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-title: ""
+    theme: flatly
+    highlight-style: github
+    self-contained: true
+execute:
+  warning: false
+  message: false
+  echo: false
+---
+
+<a href="../index.html">Back to Landing Page</a>  
+
+
+## Why Dewey Data Works in the Classroom
+
+Most datasets students encounter in introductory and intermediate data science
+courses are small, clean, and purpose-built for pedagogy. They are useful for
+learning syntax, but they rarely reflect what working with real data actually
+feels like.
+
+Dewey Data is different. Its datasets are large, rich, multi-file, and
+structured the way professional data actually arrives — coded categorical
+variables, wide-format tables that need reshaping, multiple linked files that
+need to be joined, and file sizes that make a naive `read_csv()` impractical.
+That last point is a feature, not a bug: it creates a natural, motivated reason
+to introduce tools like **DuckDB** that students will genuinely use in their
+careers.
+
+For professors teaching data wrangling, visualization, or applied data science
+in R, Dewey Data offers a compelling alternative to recycled toy datasets — one
+that gives students practice with the full pipeline a working analyst encounters.
+
+---
+
+## What Students Practice
+
+A well-designed assignment built on Dewey Data can give students hands-on
+experience with all of the following in a single project:
+
+**Data access and file formats**
+
+- Using an API key securely (environment variables, never hard-coded)
+- Downloading partitioned parquet files programmatically via the
+  [`deweyr`](https://github.com/Coxabc/deweyr) R package
+- Understanding why large datasets are distributed across multiple files
+
+**DuckDB and out-of-memory querying**
+
+- Registering parquet files as virtual views with `CREATE VIEW`
+- Querying datasets that are too large to load into R memory with
+  `DBI::dbGetQuery()`
+- Writing SQL CTEs and aggregations against real data
+- Using `duckplyr` to write familiar `dplyr`-style code that executes inside
+  DuckDB
+
+**Data wrangling**
+
+- Decoding compact categorical codes into human-readable labels
+- Reshaping wide-format data to long format with `pivot_longer()`
+- Joining two large datasets on a shared key
+- Working with ordered factors and handling missing values appropriately
+
+**Visualization**
+
+- Building multi-panel figures with `ggplot2` and `patchwork`
+- Choosing appropriate chart types for different analytical questions
+- Writing informative titles, subtitles, axis labels, and figure captions
+
+**Communication**
+
+- Summarizing findings and limitations in plain language
+- Rendering a polished `.qmd` document to HTML and publishing it
+
+---
+
+## The General Workflow
+
+The core pipeline an assignment would walk students through looks like this:
+
+```
+Install deweyr  →  Download parquet files  →  Register in DuckDB
+       ↓
+Query with raw SQL  →  Wrangle in R/duckplyr  →  Visualize  →  Summarize
+```
+
+**Step 1 — Download with `deweyr`**
+
+The [`deweyr`](https://github.com/Coxabc/deweyr) package, developed to make
+Dewey Data accessible directly from R, handles authentication and download in a
+single function call. Students store their API key as an environment variable
+and point the function at a dataset folder ID. The files land on disk as
+partitioned parquet files, ready for DuckDB.
+
+For full documentation on installation, authentication, and usage, visit the
+[deweyr GitHub repository](https://github.com/Coxabc/deweyr).
+
+**Step 2 — Register in DuckDB**
+
+Rather than loading all files into R memory, students register the downloaded
+parquet folder as a DuckDB view. DuckDB reads all files in the folder at once
+via a glob pattern, and queries execute in seconds even on multi-million-row
+datasets. This is the moment students viscerally understand why columnar formats
+and out-of-memory query engines exist.
+
+**Step 3 — Query with SQL**
+
+Students write raw SQL directly against the DuckDB views using
+`DBI::dbGetQuery()`. This is a natural opportunity to reinforce SQL fundamentals
+— aggregations, filters, joins, and CTEs — in a context where the queries are
+answering real questions rather than textbook exercises.
+
+**Step 4 — Wrangle in R**
+
+After pulling a focused, pre-filtered subset into R via a DuckDB join, students
+use the tidyverse to decode categorical codes, reshape wide data to long format,
+and prepare analysis-ready tibbles. The contrast between "query large data in
+DuckDB" and "wrangle a manageable subset in R" is itself a valuable lesson in
+modern data engineering practice.
+
+**Step 5 — Visualize and Communicate**
+
+Students build a multi-panel `ggplot2` figure and write a short summary of their
+findings — completing the full analyst workflow from raw data access to
+communicable insight.
+
+---
+
+## Other Ways to Structure the Technical Workflow
+
+The DuckDB-based workflow above is a strong default because it introduces
+students to tools that scale well beyond the classroom. But it is not the only
+way to build a meaningful Dewey Data assignment.
+
+Depending on your course goals, you might also consider:
+
+- **An instructor-prepared subset workflow** — the instructor uses `deweyr`
+  and, if needed, DuckDB behind the scenes, then gives students a smaller,
+  analysis-ready extract for wrangling, visualization, and interpretation.
+
+- **A hybrid workflow** — students download the real data themselves with
+  `deweyr`, but the instructor narrows the scope by identifying a specific file,
+  join path, or research question in advance.
+
+- **A light infrastructure workflow** — for courses focused more on analysis
+  than data engineering, students can work from pre-filtered tables while still
+  discussing how the larger parquet-based dataset was originally structured and
+  accessed.
+
+In other words, the technical setup can be adjusted to match the level of the
+course. The key idea is not that every class must use the exact same toolchain,
+but that Dewey Data gives instructors the flexibility to expose students to more
+realistic data workflows than a traditional toy dataset allows.
+
+---
+
+## Why This Scales
+
+One of the most valuable properties of this workflow for classroom use is that
+**the code does not change as the data grows**. A student can develop and test
+their pipeline on a small sample, then point it at a full multi-million-row
+dataset and have it work identically — because DuckDB is doing the heavy lifting,
+not R's in-memory engine.
+
+This means the same assignment works whether a student's laptop has 8GB or 32GB
+of RAM, and it prepares them for the reality that production datasets are rarely
+small enough to `read_csv()` comfortably.
+
+---
+
+## Choosing a Dataset
+
+Dewey Data's catalog includes datasets across consumer demographics, purchasing
+behavior, real estate, automotive, and more. For a classroom assignment, the
+most effective datasets tend to be those with:
+
+- **A natural join key** — two or more linked files that need to be combined,
+  so students practice joining
+- **Coded categorical variables** — compact letter or number codes that need
+  decoding, so students practice lookup and recoding
+- **A wide-to-long reshape** — repeated columns (like multiple vehicles per
+  person, or multiple transactions per household) that need pivoting
+- **Rich enough scope** to support multiple analytical angles, so different
+  students can explore different questions
+
+Browse the Dewey Data catalog at [deweydata.io](https://deweydata.io) to find
+datasets that fit your course's domain.
+
+---
+
+## Getting Started
+
+1. **Get access** — sign up at [deweydata.io](https://deweydata.io) and obtain
+   an API key from your account settings
+
+2. **Install `deweyr`** — the R package that handles Dewey Data downloads
+   directly from R. Installation instructions and full documentation are at the
+   [deweyr GitHub repository](https://github.com/Coxabc/deweyr)
+
+3. **Design your assignment** — use the workflow above as a starting point,
+   not a strict template. Choose a dataset from the catalog, identify the key
+   analytical questions it supports, and decide whether the assignment should
+   emphasize querying, wrangling, visualization, or an end-to-end analytical
+   workflow
+
+4. **Share the data access instructions with students** — students will need
+   their own API keys, or you can provide a course-level key depending on your
+   institution's data agreement with Dewey Data
+
+---
+
+## A Note on Data Privacy
+
+Dewey Data datasets contain individual-level consumer records. When designing
+classroom assignments, keep the following in mind:
+
+- Students should work with **aggregated outputs only** in any submitted or
+  published work — no raw rows containing individual identifiers
+- Parquet files and API keys should **never be pushed to GitHub** — teach
+  students to add `data/` to `.gitignore` and store keys in environment
+  variables from day one
+- Check your institution's data use agreement with Dewey Data for any
+  additional requirements around student access and data handling
+
+---
+
+*For questions about the `deweyr` package, visit the
+[deweyr GitHub repository](https://github.com/Coxabc/deweyr). For questions
+about dataset access, licensing, or classroom use agreements, contact Dewey Data
+directly at [deweydata.io](https://deweydata.io).*
