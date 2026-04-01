@@ -1,0 +1,200 @@
+---
+title: "GroupBy"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## GroupBy in PySpark
+
+The **`groupBy()` transformation** in PySpark allows us to **group rows that share a common value** in one or more columns, and then **apply aggregate functions** (like sum, count, average) to those groups.
+
+This is useful when you want to:
+
+-   Summarize data by categories (e.g., schools, countries, continents)
+-   Count occurrences of each group
+-   Calculate averages, totals, or other statistics per group
+
+<br><hr>
+
+## Example Dataset
+
+In the following examples we will use a sample dataset from **Dewey Data** containing education information about schools and students.
+
+To follow along: 
+
+1. Go to **Dewey Data**
+
+2. Download **Education By People Data Labs** 
+
+3. Place the file in your project's **data folder**
+
+If you need help downloading datasets, see the tutorial section: [How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/education-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+```
+
+This displays the **first few rows**, letting us see column names and understand the dataset structure.
+
+<br><hr>
+
+## Loading the Data in PySpark
+
+Before filtering, we first load the dataset into a **Spark DataFrame**.
+
+```{python}
+#| eval: false
+import pyspark as ps
+from pyspark.sql.functions import col
+
+edu = spark.read.csv("data/education-sample.csv", header=True, inferSchema=True)
+
+display(edu)
+
+```
+
+The `display()` function allows us to **visually inspect the dataset**.
+
+<br><hr>
+
+
+## Simple GroupBy
+
+**Counting Students by School**
+
+Suppose we want to **see how many records exist for each school**. We can use `groupBy()` with `count()`.
+
+```{python}
+#| eval: false
+student_counts = edu.groupBy("school_name").count().orderBy("count", ascending=False)
+
+display(student_counts)
+
+```
+
+**Explanation:**
+
+-   `groupBy("school_name")` creates groups for each unique school
+
+-   `count()` counts how many rows (students/records) belong to each school
+
+-   `orderBy("count", ascending=False)` sorts the results from **largest to smallest**
+
+This is useful for **understanding which schools have the most data records**.
+
+<br><hr>
+
+## GroupBy with Aggration and orderby
+
+**Calculating Average GPA by School**
+
+We can calculate the **average GPA per school** using `groupBy()` with `avg()`.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import avg
+
+avg_gpa = edu.groupBy("school_name").agg(
+    avg("gpa").alias("avg_gpa")
+).orderBy("avg_gpa", ascending=False)
+
+display(avg_gpa)
+
+```
+
+**Explanation:**
+
+-   `agg(avg("gpa").alias("avg_gpa"))` computes the **average GPA** for each school
+
+-   `alias("avg_gpa")` renames the resulting column for clarity
+
+-   Sorting by `avg_gpa` shows schools with the **highest average GPA** at the top
+
+This is useful for **comparing academic performance** across schools.
+
+<br><hr>
+
+## Grouping by Multiple Columns
+
+We can also group by **more than one column**, such as `school_location_country` and `school_type`.
+
+```{python}
+#| eval: false
+country_school_type_counts = edu.groupBy(
+    "school_location_country", "school_type"
+).count().orderBy("school_location_country", "count", ascending=False)
+
+display(country_school_type_counts)
+
+```
+
+**Explanation:**
+
+-   `groupBy("school_location_country", "school_type")` creates groups for each **country and school type combination**
+
+-   `count()` counts how many records exist in each group
+
+-   Sorting by country and count lets us see **distribution per country**
+
+This is useful for **analyzing data patterns across multiple dimensions**.
+
+<br><hr>
+
+## Aggregating Multiple Metrics
+
+We can aggregate **multiple statistics at once** using `agg()` with multiple functions.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import avg, max, min
+
+school_stats = edu.groupBy("school_name").agg(
+    avg("gpa").alias("avg_gpa"),
+    max("gpa").alias("max_gpa"),
+    min("gpa").alias("min_gpa")
+).orderBy("avg_gpa", ascending=False)
+
+display(school_stats)
+
+```
+
+**Explanation:**
+
+-   `avg("gpa")`, `max("gpa")`, `min("gpa")` calculate average, maximum, and minimum GPAs for each school
+
+-   `agg()` allows multiple metrics in **one step**
+
+-   Sorting by `avg_gpa` helps quickly identify **top-performing schools**
+
+This is especially useful when you want a **comprehensive summary of each group**.
+
+<br><hr>
+
+## Summary
+
+Using `groupBy()` in PySpark allows you to:
+
+-   **Summarize and aggregate data by categories**
+
+-   Count, average, sum, min, max values per group
+
+-   Group by **one or multiple columns**
+
+-   Produce **insights and summaries** without losing row-level detail
+
+GroupBy is an essential tool for **data aggregation, reporting, and exploratory analysis**.
+
+<br><hr>
+
+<footer></footer>   

@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Filter</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><img src='Images/snlogo.png' alt='Statistics Notebook Logo' style='height: 45px; margin: -5px 0px'></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    PySpark Basics
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="what_is_pyspark.html">What is PySpark?</a>
+    </li>
+    <li>
+      <a href="transformations_vs_actions.html">Transformations vs Actions</a>
+    </li>
+    <li>
+      <a href="why_use_pyspark.html">Why Use PySpark?</a>
+    </li>
+    <li>
+      <a href="how_pyspark_works.html">How PySpark Works</a>
+    </li>
+    <li>
+      <a href="core_pyspark_components.html">Core PySpark Components</a>
+    </li>
+    <li>
+      <a href="dataframes_in_pyspark.html">DataFrames in PySpark</a>
+    </li>
+    <li>
+      <a href="where_pyspark_is_used.html">Where Is PySpark Used?</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Dewey Data Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="filter.html">Filter</a>
+    </li>
+    <li>
+      <a href="Sort.html">Sort and Order</a>
+    </li>
+    <li>
+      <a href="adding_columns.html">Adding Columns</a>
+    </li>
+    <li>
+      <a href="windowing.html">Window Functions</a>
+    </li>
+    <li>
+      <a href="groupby.html">GroupBy</a>
+    </li>
+    <li>
+      <a href="aggregation.html">Aggregation</a>
+    </li>
+    <li>
+      <a href="udfs.html">UDFs (User Defined Functions)</a>
+    </li>
+    <li>
+      <a href="joins_operations.html">Joins &amp; Set Operations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    PySpark Challenges
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="basic_data_manipulation.html">Basic Data Manipulation</a>
+    </li>
+    <li>
+      <a href="aggregations_and_grouping.html">Aggregations and Grouping</a>
+    </li>
+    <li>
+      <a href="advanced_analysis.html">Advanced Analysis</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Filter</h1>
+
+</div>
+
+
+<hr>
+<div id="filtering-in-pyspark" class="section level2">
+<h2>Filtering in PySpark</h2>
+<p>The <strong><code>filter()</code> transformation</strong> in PySpark
+is used to <strong>select only the rows that meet a specific
+condition</strong>.</p>
+<p>In many datasets, we do not want to analyze every row. Instead, we
+often want to focus on only the data that is relevant to our question.
+The <code>filter()</code> function helps us do this by creating a
+<strong>new DataFrame that only contains rows that match a
+condition</strong>.</p>
+<p>For example, imagine a dataset containing people’s ages from
+<strong>15 to 21</strong>. If we only want to analyze adults, we could
+filter the dataset to include <strong>only ages 18 and
+older</strong>.</p>
+<p>Filtering is especially useful when working with <strong>large
+datasets</strong>, because it allows us to quickly narrow the data down
+to only the information we need.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="example-dataset" class="section level2">
+<h2>Example Dataset</h2>
+<p>In the following examples we will use a sample dataset from
+<strong>Dewey Data</strong>.</p>
+<p>To follow along:</p>
+<ol style="list-style-type: decimal">
+<li><p>Go to <strong>Dewey Data</strong></p></li>
+<li><p>Download <strong>WARN Layoff Data</strong></p></li>
+<li><p>Place the file in your project’s <strong>data
+folder</strong></p></li>
+</ol>
+<p>If you need help downloading datasets, see the tutorial section:</p>
+<p><a href="index.html#dewey-data-anchor">How to Get Dewey Data Sample
+Sets</a></p>
+<div
+style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+city
+</th>
+<th style="text-align:left;">
+closure_layoff
+</th>
+<th style="text-align:left;">
+company
+</th>
+<th style="text-align:left;">
+county
+</th>
+<th style="text-align:left;">
+effective_date
+</th>
+<th style="text-align:left;">
+industry
+</th>
+<th style="text-align:left;">
+notes
+</th>
+<th style="text-align:left;">
+number_of_workers
+</th>
+<th style="text-align:left;">
+region
+</th>
+<th style="text-align:left;">
+state
+</th>
+<th style="text-align:left;">
+temporary_permanent
+</th>
+<th style="text-align:left;">
+unions
+</th>
+<th style="text-align:left;">
+warn_received_date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Statewide
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+Nordstrom Card Services
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+Utah
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+2026-02-21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Clackamas
+</td>
+<td style="text-align:left;">
+Large Layoff - 10 or more workers
+</td>
+<td style="text-align:left;">
+Vacuum Technique LLC
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+04/30/2026-06/30/2026
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+9415
+</td>
+<td style="text-align:left;">
+78
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+Oregon
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+2025-12-31
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Johnson City
+</td>
+<td style="text-align:left;">
+Layoff
+</td>
+<td style="text-align:left;">
+US Endodontics, LLC
+</td>
+<td style="text-align:left;">
+Washington
+</td>
+<td style="text-align:left;">
+2/27/26
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+#202500025
+</td>
+<td style="text-align:left;">
+70
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+Tennessee
+</td>
+<td style="text-align:left;">
+Permanent
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+2025-12-30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Atlanta
+</td>
+<td style="text-align:left;">
+Permanent Layoff / Reduction in Force
+</td>
+<td style="text-align:left;">
+The Coca-Cola Company
+</td>
+<td style="text-align:left;">
+Fulton
+</td>
+<td style="text-align:left;">
+2/28/25
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+GA202500061
+</td>
+<td style="text-align:left;">
+75
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+Georgia
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+2025-12-30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Deposit
+</td>
+<td style="text-align:left;">
+Layoff - Temporary
+</td>
+<td style="text-align:left;">
+Crockett &amp; Sons Concrete, Inc. 
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+12/26/25
+</td>
+<td style="text-align:left;">
+238110
+</td>
+<td style="text-align:left;">
+61 Marian Drive Port Deposit, MD 21904
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Susquehanna
+</td>
+<td style="text-align:left;">
+Maryland
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+2025-12-29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fayette
+</td>
+<td style="text-align:left;">
+Closure
+</td>
+<td style="text-align:left;">
+Eagle Machining - First Brands Group, LLC
+</td>
+<td style="text-align:left;">
+Fulton
+</td>
+<td style="text-align:left;">
+02/27/2026-03/31/2026
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+007-25-87
+</td>
+<td style="text-align:left;">
+251
+</td>
+<td style="text-align:left;">
+None
+</td>
+<td style="text-align:left;">
+Ohio
+</td>
+<td style="text-align:left;">
+Permanent
+</td>
+<td style="text-align:left;">
+UAW Local 1181
+</td>
+<td style="text-align:left;">
+2025-12-29
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This displays the <strong>first few rows</strong>, letting us see
+column names and understand the dataset structure.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="loading-the-data-in-pyspark" class="section level2">
+<h2>Loading the Data in PySpark</h2>
+<p>Before filtering, we first load the dataset into a <strong>Spark
+DataFrame</strong>.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="im">import</span> pyspark <span class="im">as</span> ps</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> col</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>warn <span class="op">=</span> spark.read.csv(<span class="st">&quot;data/warn-layoff-data-sample.csv&quot;</span>, header<span class="op">=</span><span class="va">True</span>, inferSchema<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>display(warn)</span></code></pre></div>
+<p>The <code>display()</code> function allows us to visually inspect the
+dataset.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="numeric-filter-example" class="section level2">
+<h2>Numeric Filter Example</h2>
+<p>Sometimes we want to filter <strong>numeric columns</strong>, like
+<code>number_of_workers</code>, to focus on <strong>larger
+layoffs</strong> or <strong>smaller events</strong>.</p>
+<p>For example, we can filter the dataset to include only events where
+<strong>50 or more workers</strong> were affected.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>large_layoffs <span class="op">=</span> warn.<span class="bu">filter</span>(col(<span class="st">&quot;number_of_workers&quot;</span>) <span class="op">&gt;=</span> <span class="dv">50</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>display(large_layoffs)</span></code></pre></div>
+<p>This creates a <strong>new DataFrame</strong> that excludes small
+events affecting fewer than 50 workers.</p>
+<p><br></p>
+<p><strong>Example of how this could be used.</strong></p>
+<p>To better understand the filtered data, we can <strong>count how many
+events exist for each number of workers</strong>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>worker_counts <span class="op">=</span> (</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>    large_layoffs</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    .groupBy(<span class="st">&quot;number_of_workers&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    .count()</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    .orderBy(<span class="st">&quot;number_of_workers&quot;</span>, ascending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>worker_counts.show()</span></code></pre></div>
+<p>This allows us to see how many events affect a given number of
+workers, which is useful for <strong>summary statistics</strong> or
+further analysis.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="categorical-filter-example" class="section level2">
+<h2>Categorical Filter Example</h2>
+<p>Filtering is useful for <strong>categorical data</strong>, such as
+states.</p>
+<p>For example, we can filter the dataset to show <strong>only events in
+California</strong>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>filtered_state <span class="op">=</span> warn.<span class="bu">filter</span>(col(<span class="st">&quot;state&quot;</span>) <span class="op">==</span> <span class="st">&quot;California&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>display(filtered_state)</span></code></pre></div>
+<p>This returns only rows where the <strong>state column equals
+“California”</strong>.</p>
+<p><br></p>
+<p><strong>Example of how this could be used.</strong></p>
+<p>We can also see <strong>how many events occur in each
+state</strong>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>state_counts <span class="op">=</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    warn</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    .groupBy(<span class="st">&quot;state&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    .count()</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    .orderBy(<span class="st">&quot;state&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>state_counts.show()</span></code></pre></div>
+<p>This helps us <strong>understand the distribution of layoff events
+across states</strong>.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="multiple-conditions-and-or-filtering" class="section level2">
+<h2>Multiple Conditions (AND / OR) Filtering</h2>
+<p>We can filter rows based on <strong>more than one
+condition</strong>.</p>
+<p>For example, keep only rows where:</p>
+<ul>
+<li><p><code>number_of_workers ≥ 50</code> <strong>AND</strong></p></li>
+<li><p><code>closure_layoff</code> contains the word “Layoff”</p></li>
+</ul>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>filtered_and <span class="op">=</span> warn.<span class="bu">filter</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    (col(<span class="st">&quot;number_of_workers&quot;</span>) <span class="op">&gt;=</span> <span class="dv">50</span>) <span class="op">&amp;</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    (col(<span class="st">&quot;closure_layoff&quot;</span>).like(<span class="st">&quot;%Layoff%&quot;</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>display(filtered_and)</span></code></pre></div>
+<p>Or using <strong>OR</strong>, to keep rows where <strong>either
+condition is true</strong>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>filtered_or <span class="op">=</span> warn.<span class="bu">filter</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>    (col(<span class="st">&quot;number_of_workers&quot;</span>) <span class="op">&gt;=</span> <span class="dv">50</span>) <span class="op">|</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    (col(<span class="st">&quot;state&quot;</span>) <span class="op">==</span> <span class="st">&quot;California&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>display(filtered_or)</span></code></pre></div>
+<p><strong>Why this is useful:</strong></p>
+<p>Combining conditions allows you to <strong>focus on events that meet
+multiple criteria simultaneously</strong> or <strong>any one of several
+criteria</strong>, giving you more control over your analysis.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="using-isin-for-multiple-values" class="section level2">
+<h2>Using <code>isin()</code> for Multiple Values</h2>
+<p>When filtering for <strong>multiple categories</strong>,
+<code>isin()</code> is very convenient.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>filtered_states <span class="op">=</span> warn.<span class="bu">filter</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    col(<span class="st">&quot;state&quot;</span>).isin(<span class="st">&quot;California&quot;</span>, <span class="st">&quot;Texas&quot;</span>, <span class="st">&quot;Washington&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>display(filtered_states)</span></code></pre></div>
+<p>This code creates a new DataFrame containing only rows where the
+state column matches any one of the values “California”, “Texas”, or
+“Washington”. Internally, isin() checks each row and returns True if the
+state is in the provided list. The display() function then shows all
+rows that meet this condition, letting us quickly examine multiple
+states at once without writing multiple OR conditions.</p>
+<p><strong>Why this is useful:</strong></p>
+<p>It lets you <strong>select multiple states at once</strong> without
+writing multiple OR conditions, which keeps your code cleaner and easier
+to read.</p>
+<p><br></p>
+<hr>
+</div>
+<div id="using-between-for-numeric-ranges" class="section level2">
+<h2>Using <code>between()</code> for Numeric Ranges</h2>
+<p>The <code>between()</code> function allows you to filter numeric
+columns <strong>within a specific range</strong>.</p>
+<p>For example, we can find layoffs that affect <strong>between 50 and
+200 workers</strong>:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>filtered_workers <span class="op">=</span> warn.<span class="bu">filter</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    col(<span class="st">&quot;number_of_workers&quot;</span>).between(<span class="dv">50</span>, <span class="dv">200</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>display(filtered_workers)</span></code></pre></div>
+<p>This code filters the dataset to include only rows where
+number_of_workers is between 50 and 200, inclusive. Each row is checked,
+and only those meeting the numeric range condition are kept in the new
+DataFrame. The display() function then shows all rows that fall within
+this range, which is especially useful for analyzing mid-sized layoffs
+or creating reports based on specific thresholds.</p>
+<p><strong>Why this is useful:</strong></p>
+<p><code>between()</code> provides a <strong>readable way to filter
+numeric columns inclusively</strong>, which is especially handy for
+reporting or summary statistics.</p>
+</div>
+<div id="regex-and-like-filters" class="section level2">
+<h2>Regex and <code>like</code> Filters</h2>
+<p>PySpark allows you to filter text columns using <strong>pattern
+matching</strong>. Two common approaches are:</p>
+<ul>
+<li><p><strong><code>like()</code></strong> — simple wildcard
+matching</p></li>
+<li><p><strong><code>rlike()</code> / <code>regexp</code></strong> —
+full regular expression matching</p></li>
+</ul>
+<p>These are especially useful when you want to <strong>find rows that
+match a pattern</strong>, rather than an exact value.</p>
+<p><br></p>
+<div id="using-like-for-simple-patterns" class="section level3">
+<h3>Using <code>like()</code> for Simple Patterns</h3>
+<p>The <code>like()</code> function works like a <strong>SQL wildcard
+search</strong>.<br />
+For example, we can find all layoffs where the
+<code>closure_layoff</code> column contains the word
+<code>"Temporary"</code>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>temp_layoffs <span class="op">=</span> warn.<span class="bu">filter</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    col(<span class="st">&quot;closure_layoff&quot;</span>).like(<span class="st">&quot;%Temporary%&quot;</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>display(temp_layoffs)</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><code>%</code> is a <strong>wildcard</strong> that matches any
+sequence of characters.</p></li>
+<li><p>This keeps all rows where <code>closure_layoff</code> contains
+<code>"Temporary"</code>.</p></li>
+<li><p>It’s useful for <strong>quick text filtering</strong> without
+needing full regular expressions.</p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="using-rlike-for-regular-expressions" class="section level3">
+<h3>Using <code>rlike()</code> for Regular Expressions</h3>
+<p>The <code>rlike()</code> function allows <strong>more complex pattern
+matching</strong> using <strong>regular expressions</strong>.<br />
+For example, to find layoffs that mention either <code>"Layoff"</code>
+or <code>"Closure"</code>:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>layoff_or_closure <span class="op">=</span> warn.<span class="bu">filter</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    col(<span class="st">&quot;closure_layoff&quot;</span>).rlike(<span class="st">&quot;Layoff|Closure&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>display(layoff_or_closure)</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p>The <code>|</code> symbol means <strong>OR</strong> in regular
+expressions.</p></li>
+<li><p>This keeps all rows where <code>closure_layoff</code> contains
+<strong>either “Layoff” or “Closure”</strong>.</p></li>
+<li><p>Regular expressions let you <strong>capture complex text
+patterns</strong>, like multiple keywords, optional words, or specific
+formats (e.g., dates, codes).</p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="why-this-is-useful" class="section level3">
+<h3>Why this is useful</h3>
+<ul>
+<li><p><code>like()</code> is perfect for <strong>simple substring
+searches</strong>.</p></li>
+<li><p><code>rlike()</code> is powerful when you need <strong>flexible
+pattern matching</strong>, e.g., multiple keywords, optional terms, or
+numeric patterns in text columns.</p></li>
+<li><p>Both methods let you <strong>filter large datasets based on text
+content</strong>, which is very common in WARN or layoff
+reports.</p></li>
+</ul>
+<hr>
+<footer>
+</footer>
+</div>
+</div>
+
+
+<footer class="site-footer">
+  <div class="footer-left">
+    <p>
+      PySpark Notebook - Guide for using PySpark in collaboration with Databricks and Dewey Data<br>
+      Copyright © 2026 Data Science Department, Brigham Young University Idaho
+    </p>
+
+    <p>
+      This program is free software: you can redistribute it and/or modify  
+      it under the terms of the GNU General Public License as published by  
+      the Free Software Foundation, either version 3 of the License, or  
+      (at your option) any later version.
+    </p>
+
+    <p>
+      This program is distributed in the hope that it will be useful,  
+      but WITHOUT ANY WARRANTY; without even the implied warranty of  
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+      See the GNU General Public License for more details.
+    </p>
+  </div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

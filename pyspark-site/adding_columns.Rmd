@@ -1,0 +1,188 @@
+---
+title: "Adding Columns"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## Adding Columns in PySpark
+
+The **"add columns" transformation** in PySpark allows us to **create new columns or modify existing columns** in a dataset.\
+We can calculate new values based on other columns, apply mathematical operations, or categorize data for analysis.
+
+Adding columns is useful when you want to:
+
+-   Perform new calculations based on existing data\
+-   Convert categorical text into numbers for modeling\
+-   Create flags or indicators for filtering or grouping
+
+<br><hr>
+
+## Example Dataset
+
+In the following examples we will use a sample dataset from **Dewey Data**.
+
+To follow along: 
+
+1. Go to **Dewey Data**
+
+2. Download **Airline Employment Data By WARN Database** 
+
+3. Place the file in your project's **data folder**
+
+If you need help downloading datasets, see the tutorial section:
+
+[How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/airline-employment-data-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+
+
+```
+This displays the **first few rows**, letting us see column names and understand the dataset structure.
+
+<br><hr>
+
+## Loading the Data in PySpark
+
+Before filtering, we first load the dataset into a **Spark DataFrame**.
+
+```{python}
+#| eval: false
+import pyspark as ps
+from pyspark.sql.functions import col
+
+warn = spark.read.csv("data/airline-employment-data-sample.csv", header=True, inferSchema=True)
+
+display(warn)
+
+```
+
+The `display()` function allows us to visually inspect the dataset.
+
+<br><hr>
+
+## Create a New Column with Categorical Values
+
+Sometimes we want to convert **text categories into numbers** for easier analysis.\
+For example, we can create a column that flags airlines with **Major carriers** as 1, others as 0.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import col, when
+
+airline_flag = airline.withColumn(
+    "is_major",
+    when(col("carrier_group") == "Major", 1)
+    .otherwise(0)
+)
+
+display(airline_flag.select("carrier_group", "carrier_name", "is_major"))
+
+```
+
+**Explanation:**
+
+-   `withColumn` creates a new column called `is_major`.
+
+-   `when(...).otherwise(...)` works like an IF statement:
+
+    -   If `carrier_group` is `"Major"`, the value is 1
+
+    -   Otherwise, the value is 0
+
+-   This column can now be used for **grouping, filtering, or analysis** of major carriers.
+
+<br><hr>
+
+## Create a New Column Using Mathematical Expressions
+
+We can also create columns based on **calculations** from existing numeric columns.\
+For example, if we want to calculate **the ratio of part-time employees to total employees**:
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import expr
+
+airline_ratio = airline.withColumn(
+    "part_time_ratio",
+    expr("part_time / total")
+)
+
+display(airline_ratio.select("carrier_name", "part_time", "total", "part_time_ratio"))
+
+```
+
+**Explanation:**
+
+-   `expr("part_time / total")` performs the division for each row
+
+-   `withColumn` stores the result in a new column called `part_time_ratio`
+
+-   This column shows the **proportion of part-time employees** for each airline, which can be used for **visualization or further analysis**
+
+<br><hr>
+
+## Create a Column Representing Employee Change Between Months
+
+Suppose we have multiple months in our dataset and want to compute **the change in full-time employees from one month to the next**.\
+We can subtract previous month’s `full_time` from current month’s `full_time`.
+
+```{python}
+#| eval: false
+# Ensure month_date_parsed is sorted
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lag
+
+windowSpec = Window.partitionBy("carrier_name").orderBy("month_date_parsed")
+
+airline_change = airline.withColumn(
+    "prev_full_time",
+    lag("full_time").over(windowSpec)
+).withColumn(
+    "full_time_change",
+    col("full_time") - col("prev_full_time")
+)
+
+display(airline_change.select("carrier_name", "month_date_parsed", "full_time", "prev_full_time", "full_time_change"))
+
+```
+
+**Explanation:**
+
+-   `Window.partitionBy(...).orderBy(...)` defines the **order of rows** for each airline
+
+-   `lag("full_time")` gets the previous month’s full-time count for comparison
+
+-   `full_time_change` calculates the difference between current and previous month
+
+-   This is useful for **tracking growth or reductions** in employment over time
+
+<br><hr>
+
+## Summary
+
+Adding columns in PySpark lets you **enhance your dataset** with new insights:
+
+-   **Categorical transformations** (`when`, `otherwise`) for flags and indicators
+
+-   **Mathematical calculations** (`expr`, `col`) for ratios or sums
+
+-   **Window functions** for comparing rows over time
+
+With these tools, you can prepare your dataset for **analysis, visualization, or modeling**.
+
+<br><hr>
+
+<footer></footer>
+

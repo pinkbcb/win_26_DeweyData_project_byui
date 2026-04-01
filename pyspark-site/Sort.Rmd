@@ -1,0 +1,319 @@
+---
+title: "Sort and Order"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## Sorting and Ordering in PySpark
+
+The **`sort()` or `orderBy()` transformation** in PySpark is used to **reorder rows in a DataFrame based on one or more columns**.
+
+Sorting allows us to quickly see the **largest, smallest, earliest, or latest values** in a dataset. Unlike filtering, which removes rows, sorting **keeps all rows but changes their order**.
+
+For example, in a dataset of people's ages, sorting by age ascending shows the **youngest to oldest**, while descending shows **oldest to youngest**.
+
+Sorting is especially useful when working with **large datasets**, because it helps us identify trends, outliers, or top/bottom values quickly.
+
+<br>
+
+<hr>
+
+## Example Dataset
+
+In the following examples we will use a sample dataset from **Dewey Data**.
+
+To follow along:
+
+1.  Go to **Dewey Data**
+
+2.  Download **Daily Weather Data by Custom Weather**
+
+3.  Place the file in your project's **data folder**
+
+If you need help downloading datasets, see the tutorial section:
+
+[How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/daily-weather-data-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+```
+
+This displays the **first few rows**, letting us see column names and understand the dataset structure.
+
+<br><hr>
+
+## Loading the Data in PySpark
+
+Before sorting, we load the dataset into a **Spark DataFrame**.
+
+```{python}
+#| eval: false
+
+import pyspark as ps
+from pyspark.sql.functions import col
+
+temp = spark.read.table("workspace.default.daily_weather_data_sample")
+
+display(temp)
+
+```
+
+The `display()` function lets us visually inspect the dataset.
+
+<br>
+
+<hr>
+
+## Numeric Sort Example
+
+The `precipitation` column contains numeric data:
+
+-   **-1** = no precipitation
+
+-   **0 or higher** = actual measurements
+
+First, rename the column for easier use.
+
+```{python}
+#| eval: false
+
+temp = temp.withColumnRenamed(
+    "precipitation_integer_in_hundredths_of_a_millimeter___liquid_equivalent____0__is_used_for_trace_amounts_and___1__is_used_for_no_precipitation",
+    "precipitation"
+)
+
+```
+
+Now, sort the dataset by **precipitation ascending**:
+
+```{python}
+#| eval: false
+
+sorted_temp_asc = temp.sort(col("precipitation").asc())
+
+display(sorted_temp_asc)
+```
+
+Sorting descending (largest to smallest):
+
+```{python}
+#| eval: false
+
+sorted_temp_desc = temp.sort(col("precipitation").desc())
+
+display(sorted_temp_desc)
+
+```
+
+<br>
+
+### Checking the Sorted Results
+
+We can group by precipitation and count to confirm the order:
+
+```{python}
+#| eval: false
+
+prec_count = (
+    temp
+    .groupBy("precipitation")
+    .count()
+    .orderBy("precipitation", ascending=True)
+)
+
+prec_count.show()
+
+```
+
+<br>
+
+<hr>
+
+## Categorical Sort Example
+
+Sorting is also useful for **categorical columns**, like state names.
+
+```{python}
+#| eval: false
+
+la = spark.read.table("workspace.default.layoff")
+
+display(la)
+
+```
+
+Sort by `state` alphabetically:
+
+```{python}
+#| eval: false
+
+sorted_states = la.sort(col("state").asc())
+
+display(sorted_states)
+
+```
+
+Sort descending:
+
+```{python}
+#| eval: false
+
+sorted_states_desc = la.sort(col("state").desc())
+
+display(sorted_states_desc)
+
+```
+
+<br>
+
+**Example of why this is useful.**
+
+Counting Entries by State
+
+```{python}
+#| eval: false
+
+All = (
+    la
+    .groupBy("state")
+    .count()
+    .orderBy("state", ascending=True)
+)
+
+All.show()
+
+```
+
+This shows the distribution of records by state.
+
+<br><hr>
+
+## Sorting After Changing Data Types
+
+Sometimes numeric columns are stored as text. We convert them before sorting.
+
+```{python}
+#| eval: false
+
+edu = spark.read.table("workspace.default.education")
+
+display(edu)
+
+```
+
+Convert `end_date` to numeric:
+
+```{python}
+#| eval: false
+
+from pyspark.sql.functions import expr
+
+edu2 = edu.withColumn(
+    "end_date",
+    expr("try_cast(end_date as bigint)")
+)
+
+```
+
+Sort by `end_date` ascending:
+
+```{python}
+#| eval: false
+
+sorted_edu = edu2.sort(col("end_date").asc())
+
+display(sorted_edu)
+
+```
+
+Sort descending:
+
+```{python}
+#| eval: false
+
+sorted_edu_desc = edu2.sort(col("end_date").desc())
+
+display(sorted_edu_desc)
+
+```
+
+<br>
+
+**Example of why this is useful.**
+
+Counting Records by Year
+
+```{python}
+#| eval: false
+
+year = (
+    edu2
+    .groupBy("end_date")
+    .count()
+    .orderBy("end_date", ascending=True)
+)
+
+year.show()
+
+```
+
+This allows us to see records in chronological order after sorting.
+
+## Multi-Column Sort Example
+
+Sometimes we want to **sort by more than one column**.\
+For example, in the `daily_weather_data_sample` dataset, we might want to sort first by **precipitation** (ascending) and then by **temperature_max** (descending). This helps us see, for example, days with the same precipitation but the hottest first.
+
+```{python}
+#| eval: false
+
+multi_sorted = temp.sort(
+    col("precipitation").asc(),
+    col("temperature_max").desc()
+)
+
+display(multi_sorted)
+```
+
+
+1.  **`precipitation.asc()`** – Sorts by precipitation from smallest to largest.
+
+2.  **`temperature_max.desc()`** – Within the same precipitation value, sorts by maximum temperature from largest to smallest.
+
+This is especially useful when analyzing **hierarchies or ties** in the data.
+
+<br>
+
+### Multi-Column Sort with Categorical Data
+
+We can also sort by a categorical column and a numeric column.
+For example, sorting the `layoff` dataset by **state ascending** and **number_of_layoffs descending**:
+
+```{python}
+#| eval: false
+
+sorted_layoffs = la.sort(
+    col("state").asc(),
+    col("number_of_layoffs").desc()
+)
+
+display(sorted_layoffs)
+```
+
+This lets us quickly identify which states had the largest layoffs while keeping the states in alphabetical order.
+
+<br><hr>
+
+<footer></footer>
+

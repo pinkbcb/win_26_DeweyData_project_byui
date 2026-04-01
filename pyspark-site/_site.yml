@@ -1,0 +1,71 @@
+name: "PySpark-notebook"
+
+
+navbar:
+  title: "<img src='Images/snlogo.png' alt='Statistics Notebook Logo' style='height: 45px; margin: -5px 0px'>"
+  left:
+    - text: "PySpark Basics"
+      menu:
+        - text: "What is PySpark?"
+          href: what_is_pyspark.html
+        - text: "Transformations vs Actions"
+          href: transformations_vs_actions.html
+        - text: "Why Use PySpark?"
+          href: why_use_pyspark.html
+        - text: "How PySpark Works"
+          href: how_pyspark_works.html
+        - text: "Core PySpark Components"
+          href: core_pyspark_components.html
+        - text: "DataFrames in PySpark"
+          href: dataframes_in_pyspark.html
+        - text: "Where Is PySpark Used?"
+          href: where_pyspark_is_used.html
+
+    - text: "Dewey Data Tutorials"
+      menu:
+        - text: "Filter"
+          href: filter.html
+        - text: "Sort and Order"
+          href: Sort.html
+        - text: "Adding Columns"
+          href: adding_columns.html
+        - text: "Window Functions"
+          href: windowing.html 
+        - text: "GroupBy"
+          href: groupby.html
+        - text: "Aggregation"
+          href: aggregation.html 
+        - text: "UDFs (User Defined Functions)"
+          href: udfs.html 
+        
+        - text: "Joins & Set Operations"
+          href: joins_operations.html
+          
+          
+    - text: "PySpark Challenges"
+      menu:
+        - text: "Basic Data Manipulation"
+          href: basic_data_manipulation.html
+        - text: "Aggregations and Grouping"
+          href: aggregations_and_grouping.html
+        - text: "Advanced Analysis"
+          href: advanced_analysis.html
+
+#    - text: "Python Help"
+#      menu:
+#        - text: "Data types"
+#          href: data_types.html
+#        - text: "Transformations vs Action"
+#          href: Transformations vs Action.html
+        
+
+output_dir: "."
+
+output: 
+  html_document:
+    theme: flatly
+    css: styles.css
+    highlight: tango
+    include:
+      in-header: header.html
+      after_body: footer.html

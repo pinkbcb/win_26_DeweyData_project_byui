@@ -1,0 +1,249 @@
+---
+title: "User Defined Functions (UDFs)"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## User Defined Functions (UDFs) in PySpark
+
+UDFs allow us to **apply custom Python logic to columns** in a PySpark DataFrame.\
+Unlike built-in PySpark functions, UDFs let you **perform complex or non-standard transformations**, like:
+
+-   Categorizing numeric values
+
+-   Combining multiple columns
+
+-   Custom date formatting
+
+-   Conditional logic not available in PySpark functions
+
+UDFs are powerful but **slower than built-ins**, so use them when necessary.
+
+<br><hr>
+
+## Example Dataset
+
+We will use the **Airline Employment Data By WARN Database**.
+
+To follow along:
+
+1.  Download **airline-employment-data-sample.csv**
+
+2.  Place it in your project’s **data folder**
+
+If you need help downloading datasets, see the tutorial section:
+
+[How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/airline-employment-data-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+
+```
+
+This displays the **first few rows**, letting us see column names and understand the dataset.
+
+<br><hr>
+
+## Loading the Data in PySpark
+
+Before you start you will need to load the dataset into a **Spark DataFrame**
+
+```{python}
+#| eval: false
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+spark = SparkSession.builder.appName("UDF Tutorial").getOrCreate()
+
+airline = spark.read.csv(
+    "data/airline-employment-data-sample.csv",
+    header=True,
+    inferSchema=True
+)
+
+display(airline)
+
+```
+The `display()` function lets us **visually inspect the dataset**.
+
+<br><hr>
+
+## Creating a Basic UDF
+
+Let’s categorize airlines by **total employees**:
+
+-   `"Small"` if `total < 5000`
+
+-   `"Medium"` if `5000 <= total < 50000`
+
+-   `"Large"` if `total >= 50000`
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
+
+def categorize_size(total):
+    if total < 5000:
+        return "Small"
+    elif total < 50000:
+        return "Medium"
+    else:
+        return "Large"
+
+size_udf = udf(categorize_size, StringType())
+
+airline_size = airline.withColumn("work_status", size_udf(col("total")))
+
+display(airline_size.select("carrier_name", "total", "work_status"))
+
+```
+
+**Explanation:**
+
+-   `udf(categorize_size, StringType())` registers the Python function as a PySpark UDF.
+
+-   `withColumn("work_status", size_udf(col("total")))` creates a new column based on the UDF.
+
+<br><hr>
+
+## UDFs with Multiple Columns
+
+You can use **more than one column** in a UDF.
+
+Example: classify airlines by **full-time to total ratio**:
+
+```{python}
+#| eval: false
+def ft_ratio_category(full_time, total):
+    if total == 0:
+        return "No Data"
+    ratio = full_time / total
+    if ratio >= 0.9:
+        return "Mostly Full-time"
+    elif ratio >= 0.5:
+        return "Balanced"
+    else:
+        return "Mostly Part-time"
+
+ft_udf = udf(ft_ratio_category, StringType())
+
+airline_ratio = airline.withColumn(
+    "ft_category",
+    ft_udf(col("full_time"), col("total"))
+)
+
+display(airline_ratio.select("carrier_name", "full_time", "total", "ft_category"))
+
+```
+
+**Explanation:**
+
+-   `ft_udf` uses **two columns** to calculate a ratio.
+
+-   Useful for **custom conditional logic**.
+
+<br><hr>
+
+## UDFs for Dates
+
+Custom date logic is common.
+
+Example: extract the **month name** from `month_date_parsed`:
+
+```{python}
+#| eval: false
+from datetime import datetime
+
+def get_month_name(date_str):
+    try:
+        return datetime.strptime(date_str, "%m/%d/%Y").strftime("%B")
+    except:
+        return None
+
+month_udf = udf(get_month_name, StringType())
+
+airline_month = airline.withColumn("month_name", month_udf(col("month_date_parsed")))
+
+display(airline_month.select("carrier_name", "month_date_parsed", "month_name"))
+
+```
+
+**Explanation:**
+
+-   Converts `"10/1/2025"` → `"October"`
+
+-   Handles invalid values gracefully with `try/except`.
+
+<br><hr>
+
+## Example: Part-Time Impact
+
+Create a new column showing **part-time employment impact**:
+
+-   `< 10%` → `"Low"`
+
+-   `10–30%` → `"Medium"`
+
+-   `> 30%` → `"High"`
+
+```{python}
+#| eval: false
+def part_time_impact(part_time, total):
+    pct = part_time / total * 100
+    if pct < 10:
+        return "Low"
+    elif pct <= 30:
+        return "Medium"
+    else:
+        return "High"
+
+part_udf = udf(part_time_impact, StringType())
+
+airline_pt = airline.withColumn(
+    "part_time_impact",
+    part_udf(col("part_time"), col("total"))
+)
+
+display(airline_pt.select("carrier_name", "part_time", "total", "part_time_impact"))
+
+```
+
+**Explanation:**
+
+-   Calculates `% part-time`
+
+-   Categorizes as `Low`, `Medium`, `High`
+
+-   Useful to quickly **identify airlines with high part-time dependency**.
+
+<br><hr>
+
+## Summary
+
+UDFs in PySpark let you **apply custom logic to DataFrame columns**:
+
+-   Can use **one or multiple columns**
+
+-   Can handle **numeric calculations, strings, or dates**
+
+-   Must define the **return type**
+
+-   Slower than built-ins, so use for **custom or complex operations only**
+
+With UDFs, you can **categorize, transform, and enrich your data** in ways not possible with standard PySpark functions.
+
+<br><hr>
+
+<footer></footer> 

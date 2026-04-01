@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>PySpark Notebook</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><img src='Images/snlogo.png' alt='Statistics Notebook Logo' style='height: 45px; margin: -5px 0px'></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    PySpark Basics
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="what_is_pyspark.html">What is PySpark?</a>
+    </li>
+    <li>
+      <a href="transformations_vs_actions.html">Transformations vs Actions</a>
+    </li>
+    <li>
+      <a href="why_use_pyspark.html">Why Use PySpark?</a>
+    </li>
+    <li>
+      <a href="how_pyspark_works.html">How PySpark Works</a>
+    </li>
+    <li>
+      <a href="core_pyspark_components.html">Core PySpark Components</a>
+    </li>
+    <li>
+      <a href="dataframes_in_pyspark.html">DataFrames in PySpark</a>
+    </li>
+    <li>
+      <a href="where_pyspark_is_used.html">Where Is PySpark Used?</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Dewey Data Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="filter.html">Filter</a>
+    </li>
+    <li>
+      <a href="Sort.html">Sort and Order</a>
+    </li>
+    <li>
+      <a href="adding_columns.html">Adding Columns</a>
+    </li>
+    <li>
+      <a href="windowing.html">Window Functions</a>
+    </li>
+    <li>
+      <a href="groupby.html">GroupBy</a>
+    </li>
+    <li>
+      <a href="aggregation.html">Aggregation</a>
+    </li>
+    <li>
+      <a href="udfs.html">UDFs (User Defined Functions)</a>
+    </li>
+    <li>
+      <a href="joins_operations.html">Joins &amp; Set Operations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    PySpark Challenges
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="basic_data_manipulation.html">Basic Data Manipulation</a>
+    </li>
+    <li>
+      <a href="aggregations_and_grouping.html">Aggregations and Grouping</a>
+    </li>
+    <li>
+      <a href="advanced_analysis.html">Advanced Analysis</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">PySpark Notebook</h1>
+
+</div>
+
+
+<div style="color:gray;">
+<!-- Code to change the following paragraphs to gray text -->
+<p>Welcome to the PySpark Skills Notebook!</p>
+<p>This website is designed to be a personal reference guide for
+learning and using PySpark. It contains a series of short, focused
+mini-tutorials that walk through the core tools and concepts used when
+working with <em>PySpark</em> particularly in the context of
+<em>Databricks</em> using <em>Deweydata</em>.</p>
+<p><a href="../index.html">Back to Landing Page</a></p>
+<!--<div style="font-size:.8em;"> Code to shrink font-size of following paragraph -->
+<!--</div> Ends smaller font-size section -->
+</div>
+<!-- End gray text section -->
+<hr />
+<div id="introductions" class="section level2 tabset">
+<h2 class="tabset">Introductions</h2>
+<div id="dewey-data" class="section level3">
+<h3>Dewey Data</h3>
+<hr />
+<div id="what-is-dewey-data" class="section level4">
+<h4>What is Dewey Data?</h4>
+<p>Dewey Data is a company with a large selection of datasets, that are
+excessible without the hassle that many researchers and data analysts
+face of getting individual data licenses and even finding datasets in
+that are well documented and maintained. They have created an
+environment where data filtering and exploration has been catered to the
+individual or group using it. They strive to have a wide variety of
+datasets that allow users to research and download data collected across
+many companies, that range from weather and temperature data, all the
+way to consumer data, and much more. Because of this, and their
+collaberation with Brigham Young University Idaho, they are a great
+resource for students to extract, experiment with, analyze the data,
+especially for classes in the data science and statistics
+departments.</p>
+<hr />
+</div>
+<div id="why-do-we-use-dewey-data" class="section level4">
+<h4>Why do we use Dewey Data?</h4>
+<p>We use Dewey data because their site design not only allows for
+students to download and explore larger datasets, but also allows for
+sample data to be downloaded and examined. This sample data can be used
+to help students learn and practice python coding functions such as the
+ones used in PySpark. While the larger datasets give students to
+opportunity to explore the magnitude and complexity of real world data,
+while also being in an environment where that can still make mistakes
+and learn from them for the future. Additionally, the resource allows
+for (as mentioned above) an easier access and viewing of data without
+having to worry about the licensing for thata data.</p>
+<hr />
+</div>
+<div id="dewey-data-anchor" class="section level4">
+<h4>How to Get Dewey Data Sample Sets</h4>
+<ol style="list-style-type: decimal">
+<li>Login into your Dewey Data account. You will see the welcome page as
+shown below, or something similar to it. Search for a data set that
+sound interesting, either in the search bar or scroll through the ones
+you see on the welcome page.</li>
+</ol>
+<p>(Home Page View) <img src="Images/Home%20Page%20View.png" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Your screen will change to something that look similar to this. Go
+to the top right corner and click on the text that says “Get
+Sample”</li>
+</ol>
+<p><img src="Images/Dataset%20Page.png" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Once you do, this will give you access to an excel file, that you
+can use to practice your coding. It will look like this or something
+similar.</li>
+</ol>
+<p><img src="Images/Download%20Excel%20File.png" /></p>
+<hr />
+</div>
+<div id="how-to-set-up-your-dewey-data-account" class="section level4">
+<h4>How to set up your Dewey Data account</h4>
+<ol style="list-style-type: decimal">
+<li>(I will look into this later)</li>
+</ol>
+<p>For additional information on how to how to access the data within
+Dewey Data, and how to convert the raw data into a dataframe, please see
+“ConsumerEdgeFirstTime” (Github site from Fall 2025 project)</p>
+<hr />
+</div>
+</div>
+<div id="pyspark" class="section level3">
+<h3>PySpark</h3>
+<hr />
+<p>PySpark is a python package that has built for the ease of processing
+big data and performing analytics. It allows users to process and
+compute the data effieciently without putting strain on the system. It
+also allows users to work with similar programming along side things
+like SQL or Machine Learning. We will be using it for our projects in
+this class because of the quality and effectiveness we have found in
+teaching students to use it and it’s ease of integration with pandas or
+polars, which have been used throughout most of the other courses taken
+up to this point.</p>
+<hr />
+<div id="installing-pyspark" class="section level4">
+<h4>Installing PySpark</h4>
+<p>Type in the code below to install the package in your coding studio
+to insall PySpark.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">&#39;!pip install pyspark&#39;</span></span></code></pre></div>
+<hr />
+<div id="importing-pyspark-tools" class="section level5">
+<h5>Importing PySpark Tools</h5>
+<p>Atfer installing but, before working with data in PySpark, you need
+to import the tools PySpark provides. These imports give you the core
+building blocks you will need to get started with PySpark.</p>
+<p><strong>Import Spark Functions</strong></p>
+<p>This import gives you access to built-in PySpark functions used to
+transform and analyze data.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> functions <span class="im">as</span> F</span></code></pre></div>
+<p>Some commonly used functions include:</p>
+<p>F.col() → reference a column F.lit() → create a constant value
+F.when() → conditional logic F.sum(), F.avg() → aggregations F.concat()
+→ combine text columns</p>
+<p>This import gives you access to Spark’s data types, this is
+necessarily when doing things like defining schemas.</p>
+<hr />
+<p><strong>Import Spark Data Types</strong></p>
+<p>Next you will need to import the Spark data types. These are used
+when defining schemas, which specify the structure and data types of
+columns in a DataFrame.</p>
+<p>This is especially useful when creating DataFrames manually or when
+you want more control over how Spark interprets your data. Import the
+Spark data types with the following code:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">from</span> pyspark.sql.types <span class="im">import</span> <span class="op">*</span></span></code></pre></div>
+<hr />
+<p><strong>Import for PySpark Session</strong></p>
+<p>Lastly you will need to import to start your Spark session, which is
+the main entry point to Spark.</p>
+<p>Important: This step is not required when working in Databricks.
+Databricks automatically creates a Spark session (spark), so you do not
+need to manually start one. However, if you are working in a different
+environment you will most likely have to start your session
+manually.</p>
+<p>If you need to start a Spart sesstion use the following code:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">&quot;MyApp&quot;</span>).getOrCreate()</span></code></pre></div>
+<hr />
+</div>
+</div>
+</div>
+<div id="databricks" class="section level3">
+<h3>Databricks</h3>
+<hr />
+<div id="what-is-databricks" class="section level4">
+<h4>What is Databricks?</h4>
+<p>Databricks is a programming studio that can host the coding
+languages, Python, SQL, Scala, and R. It is a platform meant to be
+focused on machine learning, data processing, data engineering, and data
+analysis. The program is different from other coding studios in that it
+makes a difference for users by allowing for a cloud-based storage so
+that users don’t need to download the data completely themselves. We
+will be using large amounts of data in this class and will be using it
+for the purpose of the cloud storage, which we will need for that
+datasets that our class is using throughout the semester.</p>
+<hr />
+</div>
+<div id="how-do-you-set-it-up" class="section level4">
+<h4>How do you set it up?</h4>
+<p>The set up for Databricks is pretty simple. Please follow the
+instructions below.</p>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://www.databricks.com/">databricks.com</a> and
+click on the <strong>Try Databricks</strong> button.</li>
+</ol>
+<p><img src="Images/Try%20Databricks.png" /></p>
+<hr />
+<ol start="2" style="list-style-type: decimal">
+<li>Once you are on the next page, you will see a login section on the
+left of the page. Click on the <strong>Continue with Microsoft</strong>
+button.</li>
+</ol>
+<p><img src="Images/Click%20Microsoft%20Email.png" /></p>
+<hr />
+<ol start="3" style="list-style-type: decimal">
+<li>This should take you to a page either asking you to log into an
+account or asking you to pick an account. If it is the first option, it
+should redirect you to a page that will have you login to your school
+account. If not, click on the account you want to use</li>
+</ol>
+<hr />
+<ol start="4" style="list-style-type: decimal">
+<li>You will see a screen that asks you to enter a verification code.
+Look in the email that you logged in with mailbox, and find the six
+digit code (it will be a mix of numbers and letters). If it is the
+correct code, it should direct you to the next page</li>
+</ol>
+<p><img src="Images/Verify.png" /></p>
+<hr />
+<ol start="5" style="list-style-type: decimal">
+<li>You may need to verify a name and then click
+<strong>Continue</strong>. After that you will reach the homescreen for
+Databricks.</li>
+</ol>
+<p><img src="Images/Welcome%20Screen.png" /></p>
+<hr />
+<p>Additionaly, when using it from that point, if you would like to
+start a blank project, go to the top left corner, and click on the
+rounded rectangular icon next to the databricks logo. This will open up
+a side menu. Click on the option that says, <strong>+ New</strong> and
+then in the secondary sidemenu that gets opened click on the
+<strong>Notebook</strong> button. Now you are ready to start your first
+project</p>
+<p><img src="Images/Starting%20a%20Project.png" /></p>
+<hr />
+<footer>
+</footer>
+</div>
+</div>
+</div>
+
+
+<footer class="site-footer">
+  <div class="footer-left">
+    <p>
+      PySpark Notebook - Guide for using PySpark in collaboration with Databricks and Dewey Data<br>
+      Copyright © 2026 Data Science Department, Brigham Young University Idaho
+    </p>
+
+    <p>
+      This program is free software: you can redistribute it and/or modify  
+      it under the terms of the GNU General Public License as published by  
+      the Free Software Foundation, either version 3 of the License, or  
+      (at your option) any later version.
+    </p>
+
+    <p>
+      This program is distributed in the hope that it will be useful,  
+      but WITHOUT ANY WARRANTY; without even the implied warranty of  
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+      See the GNU General Public License for more details.
+    </p>
+  </div>
+</footer>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

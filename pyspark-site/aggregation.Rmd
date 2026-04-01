@@ -1,0 +1,232 @@
+---
+title: "Aggregation"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## Aggregation in PySpark
+
+**Aggregation** in PySpark allows you to **combine multiple rows into a single summary value** using functions like:
+
+-   `sum()`
+-   `avg()` (average)
+-   `max()`
+-   `min()`
+-   `count()`
+
+Aggregation is useful for things like:
+
+-   Summarizing data
+-   Calculating daily, weekly, or monthly statistics
+-   Finding trends, extremes, or averages across groups
+-   Etc.
+
+<br><hr>
+
+## Example Dataset
+
+In the following examples we will use a sample dataset from **Dewey Data**.
+
+To follow along:
+
+1.  Go to **Dewey Data**
+
+2.  Download **Daily Weather Data by Custom Weather**
+
+3.  Place the file in your project's **data folder**
+
+If you need help downloading datasets, see the tutorial section:
+
+[How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/daily-weather-data-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+```
+
+This displays the **first few rows**, letting us see column names and understand the dataset structure.
+
+<br><hr>
+
+## Loading the Data in PySpark
+
+Before sorting, we load the dataset into a **Spark DataFrame**.
+
+```{python}
+#| eval: false
+
+import pyspark as ps
+from pyspark.sql.functions import col
+
+temp = spark.read.table("workspace.default.daily_weather_data_sample")
+
+display(temp)
+
+```
+
+The `display()` function lets us visually inspect the dataset.
+
+<br><hr>
+
+## Aggregating a Single Column
+
+Suppose we want the **average temperature across all days**.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import avg
+
+avg_temp = weather.agg(avg("average_temperature_c___float_value_to_nearest_hundredths_place").alias("avg_temperature"))
+
+display(avg_temp)
+
+```
+
+**Explanation:**
+
+-   `agg()` applies an aggregation function to a column
+
+-   `avg()` calculates the **mean temperature**
+
+-   `alias("avg_temperature")` gives a readable name to the result
+
+This is useful to **get a quick summary of the dataset**.
+
+<br><hr>
+
+## Aggregating Multiple Columns
+
+We can calculate **multiple statistics in one step**.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import avg, max, min
+
+weather_summary = weather.agg(
+    avg("average_temperature_c___float_value_to_nearest_hundredths_place").alias("avg_temp"),
+    max("maximum_temperature_c___float_value_to_nearest_hundredths_place").alias("max_temp"),
+    min("minimum_temperature_c___float_value_to_nearest_hundredths_place").alias("min_temp")
+)
+
+display(weather_summary)
+
+```
+
+**Explanation:**
+
+-   `avg()`, `max()`, `min()` provide a **full summary of temperature ranges**
+
+-   `agg()` allows combining **multiple aggregate metrics**
+
+-   Results help understand **typical, high, and low temperatures**
+
+<br><hr>
+
+## Aggregation with Grouping
+
+Suppose we want to **see the average temperature by city**.
+We combine **`groupBy()` with `agg()`**.
+
+```{python}
+#| eval: false
+avg_temp_by_city = weather.groupBy("city_location_identifier__up_to_9_alphanumeric_characters_").agg(
+    avg("average_temperature_c___float_value_to_nearest_hundredths_place").alias("avg_temp"),
+    max("maximum_temperature_c___float_value_to_nearest_hundredths_place").alias("max_temp"),
+    min("minimum_temperature_c___float_value_to_nearest_hundredths_place").alias("min_temp")
+).orderBy("avg_temp", ascending=False)
+
+display(avg_temp_by_city)
+
+```
+
+**Explanation:**
+
+-   `groupBy("city_location_identifier__up_to_9_alphanumeric_characters_")` creates groups for each city
+
+-   `agg()` calculates **average, max, and min temperatures per city**
+
+-   Sorting by `avg_temp` helps identify **the warmest and coolest cities**
+
+This is useful for **city-level weather summaries**.
+
+<br><hr>
+
+## Count and Sum Aggregations
+
+We can also calculate **counts and sums**. For example, total precipitation per city:
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import sum, count
+
+precip_summary = weather.groupBy("city_location_identifier__up_to_9_alphanumeric_characters_").agg(
+    sum("precipitation_integer_in_hundredths_of_a_millimeter___liquid_equivalent____0__is_used_for_trace_amounts_and___1__is_used_for_no_precipitation").alias("total_precip"),
+    count("valid_date_as_yyyymmdd").alias("days_recorded")
+).orderBy("total_precip", ascending=False)
+
+display(precip_summary)
+
+
+```
+
+**Explanation:**
+
+-   `sum()` calculates total precipitation per city
+
+-   `count()` counts the number of days recorded per city
+
+-   This helps identify **cities with the most precipitation** or **data completeness**
+
+<br><hr>
+
+## Summary
+
+Aggregation in PySpark allows you to:
+
+-   **Summarize numeric data** using sum, average, min, max
+
+-   **Combine grouping with aggregation** for multi-level summaries
+
+-   **Quickly explore large datasets** to extract meaningful insights
+
+This is especially useful for **reporting, dashboards, and statistical analysis**.
+
+<br><hr>
+
+More aggregation functions you might want run into:
+
+-   **`countDistinct()`** – Counts the number of **unique values** in a column.
+
+-   **`first()` / `last()`** – Returns the **first or last value** in a column within a group.
+
+-   **`collect_list()`** – Collects all values from a column into a **list** for each group.
+
+-   **`collect_set()`** – Collects **unique values** into a set for each group.
+
+-   **`variance()` / `var_samp()` / `var_pop()`** – Calculates **variance** for a column (sample or population).
+
+-   **`stddev()` / `stddev_samp()` / `stddev_pop()`** – Calculates **standard deviation** for a column.
+
+-   **`skewness()`** – Measures **asymmetry** of a distribution.
+
+-   **`kurtosis()`** – Measures the **tailedness** of a distribution.
+
+-   **`approx_count_distinct()`** – Estimates the number of distinct items efficiently for **very large datasets**.
+
+-   **`sumDistinct()`** – Sums **distinct values** only, ignoring duplicates.
+
+-   And many more that can't be listed here.
+
+<br><hr>
+
+<footer></footer>

@@ -1,0 +1,334 @@
+---
+title: "Filter"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## Filtering in PySpark
+
+The **`filter()` transformation** in PySpark is used to **select only the rows that meet a specific condition**.
+
+In many datasets, we do not want to analyze every row. Instead, we often want to focus on only the data that is relevant to our question. The `filter()` function helps us do this by creating a **new DataFrame that only contains rows that match a condition**.
+
+For example, imagine a dataset containing people's ages from **15 to 21**. If we only want to analyze adults, we could filter the dataset to include **only ages 18 and older**.
+
+Filtering is especially useful when working with **large datasets**, because it allows us to quickly narrow the data down to only the information we need.
+
+<br>
+
+<hr>
+
+## Example Dataset
+
+In the following examples we will use a sample dataset from **Dewey Data**.
+
+To follow along:
+
+1.  Go to **Dewey Data**
+
+2.  Download **WARN Layoff Data**
+
+3.  Place the file in your project's **data folder**
+
+If you need help downloading datasets, see the tutorial section:
+
+[How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/warn-layoff-data-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+
+
+```
+
+This displays the **first few rows**, letting us see column names and understand the dataset structure.
+
+<br>
+
+<hr>
+
+## Loading the Data in PySpark
+
+Before filtering, we first load the dataset into a **Spark DataFrame**.
+
+```{python}
+#| eval: false
+#| 
+import pyspark as ps
+from pyspark.sql.functions import col
+
+warn = spark.read.csv("data/warn-layoff-data-sample.csv", header=True, inferSchema=True)
+
+display(warn)
+
+```
+
+The `display()` function allows us to visually inspect the dataset.
+
+<br>
+
+<hr>
+
+## Numeric Filter Example
+
+Sometimes we want to filter **numeric columns**, like `number_of_workers`, to focus on **larger layoffs** or **smaller events**.
+
+For example, we can filter the dataset to include only events where **50 or more workers** were affected.
+
+```{python}
+#| eval: false
+large_layoffs = warn.filter(col("number_of_workers") >= 50)
+
+display(large_layoffs)
+
+
+```
+
+This creates a **new DataFrame** that excludes small events affecting fewer than 50 workers.
+
+<br>
+
+**Example of how this could be used.**
+
+To better understand the filtered data, we can **count how many events exist for each number of workers**:
+
+```{python}
+#| eval: false
+worker_counts = (
+    large_layoffs
+    .groupBy("number_of_workers")
+    .count()
+    .orderBy("number_of_workers", ascending=True)
+)
+
+worker_counts.show()
+
+
+```
+
+This allows us to see how many events affect a given number of workers, which is useful for **summary statistics** or further analysis.
+
+<br>
+
+<hr>
+
+## Categorical Filter Example
+
+Filtering is useful for **categorical data**, such as states.
+
+For example, we can filter the dataset to show **only events in California**:
+
+```{python}
+#| eval: false
+filtered_state = warn.filter(col("state") == "California")
+
+display(filtered_state)
+
+
+```
+
+This returns only rows where the **state column equals "California"**.
+
+<br>
+
+**Example of how this could be used.**
+
+We can also see **how many events occur in each state**:
+
+```{python}
+#| eval: false
+state_counts = (
+    warn
+    .groupBy("state")
+    .count()
+    .orderBy("state")
+)
+
+state_counts.show()
+
+
+```
+
+This helps us **understand the distribution of layoff events across states**.
+
+<br>
+
+<hr>
+
+## Multiple Conditions (AND / OR) Filtering
+
+We can filter rows based on **more than one condition**.
+
+For example, keep only rows where:
+
+-   `number_of_workers ≥ 50` **AND**
+
+-   `closure_layoff` contains the word "Layoff"
+
+```{python}
+#| eval: false
+filtered_and = warn.filter(
+    (col("number_of_workers") >= 50) &
+    (col("closure_layoff").like("%Layoff%"))
+)
+
+display(filtered_and)
+
+
+```
+
+Or using **OR**, to keep rows where **either condition is true**:
+
+```{python}
+#| eval: false
+filtered_or = warn.filter(
+    (col("number_of_workers") >= 50) |
+    (col("state") == "California")
+)
+
+display(filtered_or)
+
+
+```
+
+**Why this is useful:**
+
+Combining conditions allows you to **focus on events that meet multiple criteria simultaneously** or **any one of several criteria**, giving you more control over your analysis.
+
+<br>
+
+<hr>
+
+## Using `isin()` for Multiple Values
+
+When filtering for **multiple categories**, `isin()` is very convenient.
+
+```{python}
+#| eval: false
+filtered_states = warn.filter(
+    col("state").isin("California", "Texas", "Washington")
+)
+
+display(filtered_states)
+
+
+```
+
+This code creates a new DataFrame containing only rows where the state column matches any one of the values "California", "Texas", or "Washington". Internally, isin() checks each row and returns True if the state is in the provided list. The display() function then shows all rows that meet this condition, letting us quickly examine multiple states at once without writing multiple OR conditions.
+
+**Why this is useful:**
+
+It lets you **select multiple states at once** without writing multiple OR conditions, which keeps your code cleaner and easier to read.
+
+<br>
+
+<hr>
+
+## Using `between()` for Numeric Ranges
+
+The `between()` function allows you to filter numeric columns **within a specific range**.
+
+For example, we can find layoffs that affect **between 50 and 200 workers**:
+
+```{python}
+#| eval: false
+filtered_workers = warn.filter(
+    col("number_of_workers").between(50, 200)
+)
+
+display(filtered_workers)
+
+
+```
+
+This code filters the dataset to include only rows where number_of_workers is between 50 and 200, inclusive. Each row is checked, and only those meeting the numeric range condition are kept in the new DataFrame. The display() function then shows all rows that fall within this range, which is especially useful for analyzing mid-sized layoffs or creating reports based on specific thresholds.
+
+**Why this is useful:**
+
+`between()` provides a **readable way to filter numeric columns inclusively**, which is especially handy for reporting or summary statistics.
+
+## Regex and `like` Filters
+
+PySpark allows you to filter text columns using **pattern matching**. Two common approaches are:
+
+-   **`like()`** — simple wildcard matching
+
+-   **`rlike()` / `regexp`** — full regular expression matching
+
+These are especially useful when you want to **find rows that match a pattern**, rather than an exact value.
+
+<br>
+
+### Using `like()` for Simple Patterns
+
+The `like()` function works like a **SQL wildcard search**.\
+For example, we can find all layoffs where the `closure_layoff` column contains the word `"Temporary"`:
+
+```{python}
+#| eval: false
+temp_layoffs = warn.filter(
+    col("closure_layoff").like("%Temporary%")
+)
+
+display(temp_layoffs)
+
+```
+
+**Explanation:**
+
+-   `%` is a **wildcard** that matches any sequence of characters.
+
+-   This keeps all rows where `closure_layoff` contains `"Temporary"`.
+
+-   It’s useful for **quick text filtering** without needing full regular expressions.
+
+<br>
+
+### Using `rlike()` for Regular Expressions
+
+The `rlike()` function allows **more complex pattern matching** using **regular expressions**.\
+For example, to find layoffs that mention either `"Layoff"` or `"Closure"`:
+
+```{python}
+#| eval: false
+layoff_or_closure = warn.filter(
+    col("closure_layoff").rlike("Layoff|Closure")
+)
+
+display(layoff_or_closure)
+
+```
+
+**Explanation:**
+
+-   The `|` symbol means **OR** in regular expressions.
+
+-   This keeps all rows where `closure_layoff` contains **either "Layoff" or "Closure"**.
+
+-   Regular expressions let you **capture complex text patterns**, like multiple keywords, optional words, or specific formats (e.g., dates, codes).
+
+<br>
+
+### Why this is useful
+
+-   `like()` is perfect for **simple substring searches**.
+
+-   `rlike()` is powerful when you need **flexible pattern matching**, e.g., multiple keywords, optional terms, or numeric patterns in text columns.
+
+-   Both methods let you **filter large datasets based on text content**, which is very common in WARN or layoff reports.
+
+<hr>
+
+<footer>
+
+</footer>

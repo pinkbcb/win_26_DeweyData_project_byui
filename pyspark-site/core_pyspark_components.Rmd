@@ -1,0 +1,183 @@
+---
+title: "Core PySpark Components"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+
+<hr/>
+
+*PySpark provides several core components that work together to process large datasets efficiently. Understanding these components helps you understand how Spark applications are structured and how data flows through a PySpark program.*
+
+<br>
+
+<hr/>
+
+## Core PySpark Components
+
+<div style="padding-left:15px;">
+
+PySpark is built around several important components that allow users to read data, transform it, and perform large-scale computations.
+
+Some of the most important components include:
+
+- **SparkSession**
+- **DataFrames**
+- **RDDs**
+- **Spark SQL**
+
+Each of these plays a different role in how PySpark processes data and performs computations.
+
+</div>
+
+<br />
+<hr />
+
+## SparkSession
+
+<div style="padding-left:15px;">
+
+The **SparkSession** is the entry point for working with PySpark. It allows you to create DataFrames, read data from files, and execute Spark SQL queries.
+
+Before performing most operations in PySpark, a SparkSession must be created. Once created, it manages the connection between your Python program and the Spark engine.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Creating a SparkSession
+
+<div style="padding-left:15px;">
+
+This example shows how a SparkSession is created. Most PySpark programs begin by initializing a SparkSession so that Spark operations can be performed.
+
+```{python}
+#| eval: false
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("PySpark Example") \
+    .getOrCreate()
+```
+
+Once the SparkSession is created, you can begin loading and processing data.
+
+</div>
+
+<br />
+<hr />
+
+## DataFrames
+
+<div style="padding-left:15px;">
+
+A **DataFrame** is the most commonly used data structure in PySpark. It represents data organized into rows and columns, similar to a table in a database or a dataframe in pandas.
+
+DataFrames support many built-in operations such as filtering rows, selecting columns, grouping data, and performing aggregations.
+
+Because DataFrames are optimized by Spark’s execution engine, they are usually the preferred way to work with data in PySpark.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Creating a DataFrame
+
+<div style="padding-left:15px;">
+
+This example shows how a DataFrame can be created by reading a dataset.
+
+```{python}
+#| eval: false
+df = spark.read.csv("data.csv", header=True, inferSchema=True)
+
+df.show()
+```
+
+Once the DataFrame is created, Spark can apply transformations and actions to process the data.
+
+</div>
+
+<br />
+<hr />
+
+## RDDs
+
+<div style="padding-left:15px;">
+
+**RDDs (Resilient Distributed Datasets)** are the original data structure used in Spark. An RDD is a distributed collection of data that can be processed in parallel across a cluster.
+
+RDDs provide more control over how data is distributed and processed, but they are lower-level than DataFrames and require more manual work.
+
+Because DataFrames provide better performance optimizations and easier syntax, they are typically preferred over RDDs for most tasks.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Creating an RDD
+
+<div style="padding-left:15px;">
+
+This example shows how an RDD can be created from a simple Python collection.
+
+```{python}
+#| eval: false
+data = [1, 2, 3, 4, 5]
+
+rdd = spark.sparkContext.parallelize(data)
+
+print(rdd.collect())
+```
+
+RDDs are still useful in some advanced situations but are used less frequently in modern PySpark workflows.
+
+</div>
+
+<br />
+<hr />
+
+## Spark SQL
+
+<div style="padding-left:15px;">
+
+**Spark SQL** allows you to run SQL queries on DataFrames. This makes it possible to analyze large datasets using familiar SQL syntax.
+
+Spark SQL integrates directly with DataFrames, allowing you to create temporary views and run queries against them.
+
+This feature is especially helpful for users who are already comfortable working with SQL.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Using Spark SQL
+
+<div style="padding-left:15px;">
+
+This example shows how a DataFrame can be registered as a temporary view and queried using SQL.
+
+```{python}
+#| eval: false
+df.createOrReplaceTempView("people")
+
+result = spark.sql("SELECT * FROM people WHERE age > 25")
+
+result.show()
+```
+
+Spark will execute the SQL query using its distributed execution engine.
+
+</div>
+
+<br />
+<hr />
+
+<footer></footer>
+

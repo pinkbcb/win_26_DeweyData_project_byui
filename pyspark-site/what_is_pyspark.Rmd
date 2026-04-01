@@ -1,0 +1,90 @@
+---
+title: "What is PySpark?"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr/>
+
+*PySpark is a powerful tool used for processing large datasets efficiently. It allows Python users to work with Apache Spark and perform big data analysis across distributed computing systems.*
+
+<br>
+
+<hr/>
+
+## What is PySpark?
+
+<div style="padding-left:15px;">
+
+**PySpark** is the Python interface for **Apache Spark**, an open-source framework designed for large-scale data processing and analytics. It allows programmers to use Python to interact with Spark's powerful distributed computing engine.
+
+Instead of processing data on a single machine, Spark distributes tasks across multiple computers (called **nodes**) in a cluster. PySpark provides a way to write Python code that Spark can execute across this distributed system.
+
+Because Python is widely used in data science, PySpark makes Spark accessible to many analysts and engineers who prefer working in Python rather than Scala or Java.
+
+</div>
+
+<br />
+<hr />
+
+## Relationship to Apache Spark
+
+<div style="padding-left:15px;">
+
+**Apache Spark** is the core processing engine that performs the heavy computation. It was originally built in Scala and is designed to process massive datasets quickly using distributed computing.
+
+**PySpark** acts as a bridge between Python and Spark. When you write PySpark code, the commands are translated so Spark can execute them across the cluster.
+
+In simple terms:
+
+- **Spark** → the powerful data processing engine  
+- **PySpark** → the Python interface used to control Spark
+
+This relationship allows users to combine the scalability of Spark with the simplicity of Python programming.
+
+</div>
+
+<br />
+<hr />
+
+## Why PySpark Exists
+
+<div style="padding-left:15px;">
+
+Spark was originally built for languages like Scala and Java, which are powerful but less commonly used by data analysts.
+
+PySpark was created to make Spark easier to use for the large community of Python developers. Since Python is one of the most popular languages for data science, PySpark allows users to analyze large datasets without needing to learn a new programming language.
+
+By using PySpark, analysts can combine Spark’s performance with Python tools such as:
+
+- data analysis libraries
+- machine learning workflows
+- data engineering pipelines
+
+This makes PySpark a common tool in modern data science and big data environments.
+
+</div>
+
+<br />
+<hr />
+
+## Distributed Computing (High-Level Overview)
+
+<div style="padding-left:15px;">
+
+Traditional programs process data on a **single computer**. When datasets become extremely large, this approach becomes slow or impossible.
+
+**Distributed computing** solves this problem by splitting data across many machines and processing it in parallel. Each computer works on a portion of the data, and the results are combined at the end.
+
+Spark uses distributed computing to process massive datasets efficiently. Instead of one machine performing all calculations, a cluster of machines works together.
+
+PySpark allows users to write simple Python code while Spark manages the complex distributed processing behind the scenes.
+
+</div>
+
+<br />
+<hr />
+
+<footer></footer>

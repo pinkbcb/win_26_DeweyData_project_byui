@@ -1,0 +1,84 @@
+---
+title: "basic_data_manipulation"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+
+## Challenge 1: Basic Data Manipulation {.tabset}
+
+### Challenge
+
+In this challenge you will practice **filtering, sorting, and creating new columns** in PySpark.
+
+Use the **WARN Layoff dataset** used in the tutorial.
+
+**Tasks:**
+
+1.  Load the dataset `warn-layoff-data-sample.csv` into a Spark DataFrame.
+
+2.  Filter the dataset to include only rows where **state = "California"**.
+
+3.  From the filtered data, keep only layoffs where **number_of_workers ≥ 50**.
+
+4.  Sort the results by **number_of_workers (largest first)**.
+
+5.  Create a new column called **workers_double** that multiplies `number_of_workers` by 2.
+
+6.  Display the final DataFrame.
+
+You should use the following functions:
+
+-   `filter()`
+
+-   `orderBy()`
+
+-   `withColumn()`
+
+----
+
+### Potential Solution
+
+One possible solution is shown below. This example walks through each step needed to complete the challenge: loading the data, filtering rows, sorting the results, and creating a new column.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import col
+
+# Load the dataset
+warn = spark.read.csv(
+    "data/warn-layoff-data-sample.csv",
+    header=True,
+    inferSchema=True
+)
+
+# Step 1: Filter rows where the state is California
+ca_warn = warn.filter(col("state") == "California")
+
+# Step 2: Keep only layoffs with 50 or more workers
+large_ca_warn = ca_warn.filter(col("number_of_workers") >= 50)
+
+# Step 3: Sort by number_of_workers from largest to smallest
+sorted_warn = large_ca_warn.orderBy(col("number_of_workers").desc())
+
+# Step 4: Create a new column that doubles the number of workers
+final_warn = sorted_warn.withColumn(
+    "workers_double",
+    col("number_of_workers") * 2
+)
+
+# Display the result
+display(final_warn)
+```
+
+**Explanation**
+
+- **`spark.read.csv()`** loads the dataset into a Spark DataFrame.
+- **`filter()`** removes rows that do not meet the specified condition.
+- **`orderBy()`** sorts the rows based on a column.
+- **`withColumn()`** creates a new column using an existing column.
+- **`display()`** shows the final DataFrame so we can inspect the results.
+
+----

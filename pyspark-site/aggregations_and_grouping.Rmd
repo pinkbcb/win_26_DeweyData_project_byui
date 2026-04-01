@@ -1,0 +1,84 @@
+---
+title: "Aggregations and Grouping"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+<hr>
+
+## Challenge 2: Aggregations and Grouping {.tabset}
+
+### Challenge
+
+In this challenge you will practice **grouping data and calculating summary statistics** using PySpark.
+
+Use the **daily-weather-data-sample.csv** dataset.
+
+**Tasks:**
+
+1. Load the dataset `daily-weather-data-sample.csv` into a Spark DataFrame.
+2. Group the dataset by `city_location_identifier__up_to_9_alphanumeric_characters_`.
+3. Calculate the following aggregations for each city:
+   - The **average temperature**
+   - The **maximum temperature**
+   - The **minimum temperature**
+4. Sort the results by **average temperature (highest first)**.
+5. Display the final DataFrame.
+
+You should use the following functions:
+
+- `groupBy()`
+- `agg()`
+- `avg()`
+- `max()`
+- `min()`
+- `orderBy()`
+
+
+----
+
+### Potential Solution
+
+One possible solution is shown below. This example groups the dataset by city and calculates several summary statistics for temperature.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import col, avg, max, min
+
+# Load the dataset
+weather = spark.read.csv(
+    "data/daily-weather-data-sample.csv",
+    header=True,
+    inferSchema=True
+)
+
+# Step 1: Group the data by city
+city_weather = weather.groupBy(
+    "city_location_identifier__up_to_9_alphanumeric_characters_"
+)
+
+# Step 2: Calculate aggregation statistics
+weather_summary = city_weather.agg(
+    avg("average_temperature_c___float_value_to_nearest_hundredths_place").alias("avg_temp"),
+    max("maximum_temperature_c___float_value_to_nearest_hundredths_place").alias("max_temp"),
+    min("minimum_temperature_c___float_value_to_nearest_hundredths_place").alias("min_temp")
+)
+
+# Step 3: Sort by average temperature (highest first)
+sorted_weather = weather_summary.orderBy(col("avg_temp").desc())
+
+# Display the result
+display(sorted_weather)
+```
+
+**Explanation**
+
+- **`groupBy()`** groups rows that share the same value (in this case, the same city).
+- **`agg()`** allows multiple aggregation calculations to be performed at once.
+- **`avg()`**, **`max()`**, and **`min()`** compute summary statistics for each group.
+- **`alias()`** renames the resulting columns so they are easier to read.
+- **`orderBy()`** sorts the aggregated results.
+- **`display()`** shows the final DataFrame.
+
+----

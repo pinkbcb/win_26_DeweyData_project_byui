@@ -1,0 +1,162 @@
+---
+title: "How PySpark Works"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr/>
+
+*PySpark works by distributing data and computations across multiple machines. Instead of running everything on a single computer, Spark coordinates work between a driver program and many worker nodes.*
+
+<br>
+
+<hr/>
+
+## How PySpark Works
+
+<div style="padding-left:15px;">
+
+PySpark uses a distributed computing system that allows large datasets to be processed efficiently. When a PySpark program runs, it coordinates work between a **driver** and multiple **workers** in a cluster.
+
+The driver program manages the overall computation and sends tasks to worker machines. The workers then process pieces of the data in parallel and return the results.
+
+This design allows Spark to handle datasets that are much larger than what a single computer could process.
+
+</div>
+
+<br />
+<hr />
+
+## Driver vs Workers
+
+<div style="padding-left:15px;">
+
+In a Spark application, the **driver** is the main program that controls the execution of the code. It creates the Spark session, builds the execution plan, and coordinates the tasks that need to be performed.
+
+The **workers** are the machines in the cluster that actually perform the computations. Each worker processes a portion of the data and reports the results back to the driver.
+
+This separation of responsibilities allows Spark to efficiently distribute large workloads across many machines.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Driver Submitting Work
+
+<div style="padding-left:15px;">
+
+In this example, the driver creates a DataFrame and defines a transformation. Spark then distributes the work to worker nodes when the computation runs.
+
+```{python}
+#| eval: false
+df = spark.read.csv("data.csv", header=True, inferSchema=True)
+
+filtered_df = df.filter(df["age"] > 25)
+```
+
+
+The driver coordinates the task while the workers process the data in parallel.
+
+</div>
+
+<br />
+<hr />
+
+## Cluster Computing
+
+<div style="padding-left:15px;">
+
+Spark operates using **cluster computing**, where multiple machines work together to process large amounts of data.
+
+A cluster typically consists of:
+
+- A **driver node** that manages the program
+- Multiple **worker nodes** that perform the computations
+- A **cluster manager** that allocates resources
+
+By splitting data into partitions and distributing them across workers, Spark can process data much faster than a single machine.
+
+</div>
+
+<br />
+<hr />
+
+## Lazy Execution
+
+<div style="padding-left:15px;">
+
+PySpark uses **lazy execution**, which means that transformations are not immediately executed when they are written.
+
+Instead, Spark records the transformations and builds an execution plan. The computation only runs when an **action** is called.
+
+This approach allows Spark to optimize the workflow before running the actual computation.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Lazy Execution
+
+<div style="padding-left:15px;">
+
+In this example, several transformations are defined, but the computation does not run until an action is called.
+
+```{python}
+#| eval: false
+df_filtered = df.filter(df["age"] > 25)
+df_selected = df_filtered.select("name", "age")
+
+df_selected.show()
+```
+
+Spark waits until the action is executed before performing the transformations.
+
+</div>
+
+<br />
+<hr />
+
+## Directed Acyclic Graph (DAG)
+
+<div style="padding-left:15px;">
+
+Spark represents computations using a **Directed Acyclic Graph (DAG)**. A DAG is a structure that describes the sequence of operations that need to be performed.
+
+Each transformation creates a new step in the DAG. When an action is triggered, Spark analyzes the DAG and determines the most efficient way to execute the computation.
+
+Because the graph is **acyclic**, the operations move forward without circular dependencies.
+
+</div>
+
+<br />
+<hr />
+
+## Example: DAG Execution
+
+<div style="padding-left:15px;">
+
+This example shows how multiple transformations form a sequence of operations that Spark organizes into a DAG before executing.
+
+```{python}
+#| eval: false
+result = (
+    df.filter(df["age"] > 25)
+      .groupBy("department")
+      .count()
+)
+
+result.show()
+```
+
+Spark uses the DAG to optimize the order of operations and improve performance.
+
+</div>
+
+<br />
+<hr />
+
+<footer></footer>

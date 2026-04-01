@@ -1,0 +1,115 @@
+---
+title: "Transformations vs Actions"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr/>
+
+*In PySpark, operations are divided into two main types: transformations and actions. Understanding the difference between them helps explain how Spark processes data efficiently.*
+
+<br>
+
+<hr/>
+
+## Transformations vs Actions
+
+<div style="padding-left:15px;">
+
+When working with PySpark DataFrames, most operations fall into one of two categories: **transformations** or **actions**.
+
+A **transformation** describes how Spark should change a dataset, but Spark does not immediately perform the work. Instead, Spark builds a plan of transformations to execute later. This behavior is called **lazy evaluation**, and it allows Spark to optimize the computation before running it.
+
+An **action** tells Spark to actually execute the transformations and return a result. When an action is called, Spark processes all the queued transformations and produces output such as displaying data, counting rows, or saving results.
+
+</div>
+
+<br />
+<hr />
+
+## Transformations
+
+<div style="padding-left:15px;">
+
+Transformations create a **new DataFrame from an existing one** without immediately running the computation.
+
+Common transformation functions include:
+
+- `select()`
+- `filter()`
+- `withColumn()`
+- `groupBy()`
+
+</div>
+
+<br />
+<hr />
+
+## Transformation Example
+
+<div style="padding-left:15px;">
+
+This example filters a DataFrame to only include rows where the `age` column is greater than 25.  
+Because `filter()` is a transformation, Spark **does not run the computation yet**.
+
+```{python}
+#| eval: false
+# Filter rows where age is greater than 25
+filtered_df = df.filter(df.age > 25)
+
+# You can also write it like this
+filtered_df = df.filter(df["age"] > 25)
+```
+
+Spark records this transformation but waits until an **action** is called before actually running the computation.
+
+</div>
+
+<br />
+<hr />
+
+## Actions
+
+<div style="padding-left:15px;">
+
+Actions **trigger Spark to run the computation**. When an action is executed, Spark processes all previously defined transformations and returns a result.
+
+Common actions include:
+
+- `show()`
+- `count()`
+- `collect()`
+- `write()`
+
+</div>
+
+<br />
+<hr />
+
+## Action Example
+
+<div style="padding-left:15px;">
+
+Here, the `show()` function displays the contents of the DataFrame.  
+Calling `show()` forces Spark to execute all the transformations that were previously defined.
+
+```{python}
+#| eval: false
+# Trigger the computation and display results
+filtered_df.show()
+
+# Another common action example
+row_count = filtered_df.count()
+print(row_count)
+```
+
+Once this action runs, Spark performs the filtering transformation and returns the resulting rows.
+
+</div>
+
+<br />
+<hr />
+
+<footer></footer>

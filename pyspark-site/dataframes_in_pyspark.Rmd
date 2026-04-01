@@ -1,0 +1,173 @@
+---
+title: "DataFrames in PySpark"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+
+<hr/>
+
+*DataFrames are the primary data structure used in PySpark. They allow users to work with structured data in a distributed environment while using a familiar table-like format.*
+
+<br>
+
+<hr/>
+
+## DataFrames in PySpark
+
+<div style="padding-left:15px;">
+
+A **DataFrame** in PySpark is a distributed collection of data organized into rows and columns. It is similar to a table in a database or a dataframe in pandas.
+
+DataFrames are designed to handle large datasets efficiently by distributing data across multiple machines. Spark automatically optimizes many DataFrame operations, making them faster and easier to use than lower-level data structures.
+
+Because of these advantages, DataFrames are the most commonly used way to work with data in PySpark.
+
+</div>
+
+<br />
+<hr />
+
+## What is a DataFrame?
+
+<div style="padding-left:15px;">
+
+A DataFrame stores structured data where each column has a name and a data type. This structure allows Spark to perform efficient operations such as filtering rows, selecting columns, grouping data, and performing aggregations.
+
+DataFrames support both programmatic operations in Python and SQL-style queries through Spark SQL.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Creating a DataFrame
+
+<div style="padding-left:15px;">
+
+This example demonstrates how a dataset can be loaded into a PySpark DataFrame.
+
+```{python}
+#| eval: false
+df = spark.read.csv("data.csv", header=True, inferSchema=True)
+
+df.show()
+```
+
+Once the DataFrame is created, Spark can apply transformations and actions to process the data.
+
+</div>
+
+<br />
+<hr />
+
+## DataFrames vs pandas
+
+<div style="padding-left:15px;">
+
+PySpark DataFrames and pandas DataFrames are similar in structure, but they are designed for different scales of data.
+
+A **pandas DataFrame** stores all data in memory on a single machine. This makes it fast for small datasets but limits the size of data that can be processed.
+
+A **PySpark DataFrame** distributes data across multiple machines in a cluster. This allows Spark to process very large datasets that would not fit into memory on a single computer.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Using pandas dataframes
+
+<div style="padding-left:15px;">
+
+This shows a pandas DataFrame, which runs locally instead of distributed like PySpark.
+
+```{python}
+#| eval: false
+import pandas as pd
+
+pdf = pd.read_csv("data.csv")
+
+print(type(pdf))
+```
+
+Spark performs this operation across distributed data partitions.
+
+</div>
+
+<br />
+<hr />
+
+## Schema
+
+<div style="padding-left:15px;">
+
+Every PySpark DataFrame has a **schema**, which defines the structure of the data. The schema describes the column names and their data types.
+
+Schemas help Spark understand how to process the data and allow it to optimize queries more efficiently.
+
+Schemas can either be inferred automatically when data is loaded or defined manually by the user.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Viewing a Schema
+
+<div style="padding-left:15px;">
+
+This example shows how the schema of a DataFrame can be displayed.
+
+```{python}
+#| eval: false
+df.printSchema()
+```
+
+Viewing the schema helps confirm that the data types and column names are correct.
+
+</div>
+
+<br />
+<hr />
+
+## Column-Based Operations
+
+<div style="padding-left:15px;">
+
+PySpark DataFrames support **column-based operations**, meaning that transformations are usually performed on entire columns rather than individual rows.
+
+This approach allows Spark to optimize computations and process large datasets efficiently.
+
+Common column operations include selecting columns, creating new columns, and modifying existing ones.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Creating a New Column
+
+<div style="padding-left:15px;">
+
+This example demonstrates how a new column can be created using an existing column.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import col
+
+df_with_new_column = df.withColumn("age_plus_one", col("age") + 1)
+
+df_with_new_column.show()
+```
+
+Spark applies the transformation across the distributed dataset.
+
+</div>
+
+<br />
+<hr />
+
+<footer></footer>

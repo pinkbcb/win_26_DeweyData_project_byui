@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Aggregation</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><img src='Images/snlogo.png' alt='Statistics Notebook Logo' style='height: 45px; margin: -5px 0px'></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    PySpark Basics
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="what_is_pyspark.html">What is PySpark?</a>
+    </li>
+    <li>
+      <a href="transformations_vs_actions.html">Transformations vs Actions</a>
+    </li>
+    <li>
+      <a href="why_use_pyspark.html">Why Use PySpark?</a>
+    </li>
+    <li>
+      <a href="how_pyspark_works.html">How PySpark Works</a>
+    </li>
+    <li>
+      <a href="core_pyspark_components.html">Core PySpark Components</a>
+    </li>
+    <li>
+      <a href="dataframes_in_pyspark.html">DataFrames in PySpark</a>
+    </li>
+    <li>
+      <a href="where_pyspark_is_used.html">Where Is PySpark Used?</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Dewey Data Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="filter.html">Filter</a>
+    </li>
+    <li>
+      <a href="Sort.html">Sort and Order</a>
+    </li>
+    <li>
+      <a href="adding_columns.html">Adding Columns</a>
+    </li>
+    <li>
+      <a href="windowing.html">Window Functions</a>
+    </li>
+    <li>
+      <a href="groupby.html">GroupBy</a>
+    </li>
+    <li>
+      <a href="aggregation.html">Aggregation</a>
+    </li>
+    <li>
+      <a href="udfs.html">UDFs (User Defined Functions)</a>
+    </li>
+    <li>
+      <a href="joins_operations.html">Joins &amp; Set Operations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    PySpark Challenges
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="basic_data_manipulation.html">Basic Data Manipulation</a>
+    </li>
+    <li>
+      <a href="aggregations_and_grouping.html">Aggregations and Grouping</a>
+    </li>
+    <li>
+      <a href="advanced_analysis.html">Advanced Analysis</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Aggregation</h1>
+
+</div>
+
+
+<hr>
+<div id="aggregation-in-pyspark" class="section level2">
+<h2>Aggregation in PySpark</h2>
+<p><strong>Aggregation</strong> in PySpark allows you to <strong>combine
+multiple rows into a single summary value</strong> using functions
+like:</p>
+<ul>
+<li><code>sum()</code></li>
+<li><code>avg()</code> (average)</li>
+<li><code>max()</code></li>
+<li><code>min()</code></li>
+<li><code>count()</code></li>
+</ul>
+<p>Aggregation is useful for things like:</p>
+<ul>
+<li>Summarizing data</li>
+<li>Calculating daily, weekly, or monthly statistics</li>
+<li>Finding trends, extremes, or averages across groups</li>
+<li>Etc.</li>
+</ul>
+<br>
+<hr>
+</div>
+<div id="example-dataset" class="section level2">
+<h2>Example Dataset</h2>
+<p>In the following examples we will use a sample dataset from
+<strong>Dewey Data</strong>.</p>
+<p>To follow along:</p>
+<ol style="list-style-type: decimal">
+<li><p>Go to <strong>Dewey Data</strong></p></li>
+<li><p>Download <strong>Daily Weather Data by Custom
+Weather</strong></p></li>
+<li><p>Place the file in your project’s <strong>data
+folder</strong></p></li>
+</ol>
+<p>If you need help downloading datasets, see the tutorial section:</p>
+<p><a href="index.html#dewey-data-anchor">How to Get Dewey Data Sample
+Sets</a></p>
+<div
+style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+average_dew_point_f___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+average_relative_humidity_____float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+average_sea_level_pressure_millibars___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+average_temperature_c___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+average_visibility_kilometers___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+average_wind_speed_knots___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:left;">
+city_location_identifier_<em>up_to_9_alphanumeric_characters</em>
+</th>
+<th style="text-align:right;">
+cooling_degree_days_c___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+heating_degree_days_c___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+maximum_temperature_c___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+minimum_temperature_c___float_value_to_nearest_hundredths_place
+</th>
+<th style="text-align:right;">
+precipitation_integer_in_hundredths_of_a_millimeter_<strong>liquid_equivalent</strong>__0<strong>is_used_for_trace_amounts_and</strong>_1__is_used_for_no_precipitation
+</th>
+<th style="text-align:left;">
+valid_date_as_yyyymmdd
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+-3.47
+</td>
+<td style="text-align:right;">
+66.74
+</td>
+<td style="text-align:right;">
+1014.60
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+16.10
+</td>
+<td style="text-align:right;">
+4.80
+</td>
+<td style="text-align:left;">
+K04W
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+16.83
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+-4
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:left;">
+2024-04-01
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-0.95
+</td>
+<td style="text-align:right;">
+84.05
+</td>
+<td style="text-align:right;">
+1010.19
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+14.14
+</td>
+<td style="text-align:right;">
+5.98
+</td>
+<td style="text-align:left;">
+K04W
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+16.33
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:left;">
+2024-04-02
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-6.49
+</td>
+<td style="text-align:right;">
+47.54
+</td>
+<td style="text-align:right;">
+1006.81
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+16.10
+</td>
+<td style="text-align:right;">
+12.39
+</td>
+<td style="text-align:left;">
+K04W
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+13.33
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:left;">
+2024-04-03
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-4.31
+</td>
+<td style="text-align:right;">
+55.88
+</td>
+<td style="text-align:right;">
+1013.92
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+16.10
+</td>
+<td style="text-align:right;">
+5.42
+</td>
+<td style="text-align:left;">
+K04W
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+13.33
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+-2
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:left;">
+2024-04-04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-4.03
+</td>
+<td style="text-align:right;">
+58.93
+</td>
+<td style="text-align:right;">
+1021.37
+</td>
+<td style="text-align:right;">
+4.5
+</td>
+<td style="text-align:right;">
+16.10
+</td>
+<td style="text-align:right;">
+2.94
+</td>
+<td style="text-align:left;">
+K04W
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+13.83
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+-5
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:left;">
+2024-04-05
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-4.02
+</td>
+<td style="text-align:right;">
+50.16
+</td>
+<td style="text-align:right;">
+1020.35
+</td>
+<td style="text-align:right;">
+6.5
+</td>
+<td style="text-align:right;">
+16.10
+</td>
+<td style="text-align:right;">
+7.06
+</td>
+<td style="text-align:left;">
+K04W
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+11.83
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+-2
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:left;">
+2024-04-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This displays the <strong>first few rows</strong>, letting us see
+column names and understand the dataset structure.</p>
+<br>
+<hr>
+</div>
+<div id="loading-the-data-in-pyspark" class="section level2">
+<h2>Loading the Data in PySpark</h2>
+<p>Before sorting, we load the dataset into a <strong>Spark
+DataFrame</strong>.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="im">import</span> pyspark <span class="im">as</span> ps</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> col</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>temp <span class="op">=</span> spark.read.table(<span class="st">&quot;workspace.default.daily_weather_data_sample&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>display(temp)</span></code></pre></div>
+<p>The <code>display()</code> function lets us visually inspect the
+dataset.</p>
+<br>
+<hr>
+</div>
+<div id="aggregating-a-single-column" class="section level2">
+<h2>Aggregating a Single Column</h2>
+<p>Suppose we want the <strong>average temperature across all
+days</strong>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> avg</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>avg_temp <span class="op">=</span> weather.agg(avg(<span class="st">&quot;average_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;avg_temperature&quot;</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>display(avg_temp)</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><code>agg()</code> applies an aggregation function to a
+column</p></li>
+<li><p><code>avg()</code> calculates the <strong>mean
+temperature</strong></p></li>
+<li><p><code>alias("avg_temperature")</code> gives a readable name to
+the result</p></li>
+</ul>
+<p>This is useful to <strong>get a quick summary of the
+dataset</strong>.</p>
+<br>
+<hr>
+</div>
+<div id="aggregating-multiple-columns" class="section level2">
+<h2>Aggregating Multiple Columns</h2>
+<p>We can calculate <strong>multiple statistics in one
+step</strong>.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> avg, <span class="bu">max</span>, <span class="bu">min</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>weather_summary <span class="op">=</span> weather.agg(</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    avg(<span class="st">&quot;average_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;avg_temp&quot;</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="bu">max</span>(<span class="st">&quot;maximum_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;max_temp&quot;</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="bu">min</span>(<span class="st">&quot;minimum_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;min_temp&quot;</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>display(weather_summary)</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><code>avg()</code>, <code>max()</code>, <code>min()</code>
+provide a <strong>full summary of temperature ranges</strong></p></li>
+<li><p><code>agg()</code> allows combining <strong>multiple aggregate
+metrics</strong></p></li>
+<li><p>Results help understand <strong>typical, high, and low
+temperatures</strong></p></li>
+</ul>
+<br>
+<hr>
+</div>
+<div id="aggregation-with-grouping" class="section level2">
+<h2>Aggregation with Grouping</h2>
+<p>Suppose we want to <strong>see the average temperature by
+city</strong>. We combine <strong><code>groupBy()</code> with
+<code>agg()</code></strong>.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>avg_temp_by_city <span class="op">=</span> weather.groupBy(<span class="st">&quot;city_location_identifier__up_to_9_alphanumeric_characters_&quot;</span>).agg(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>    avg(<span class="st">&quot;average_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;avg_temp&quot;</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="bu">max</span>(<span class="st">&quot;maximum_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;max_temp&quot;</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="bu">min</span>(<span class="st">&quot;minimum_temperature_c___float_value_to_nearest_hundredths_place&quot;</span>).alias(<span class="st">&quot;min_temp&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>).orderBy(<span class="st">&quot;avg_temp&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>display(avg_temp_by_city)</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><code>groupBy("city_location_identifier__up_to_9_alphanumeric_characters_")</code>
+creates groups for each city</p></li>
+<li><p><code>agg()</code> calculates <strong>average, max, and min
+temperatures per city</strong></p></li>
+<li><p>Sorting by <code>avg_temp</code> helps identify <strong>the
+warmest and coolest cities</strong></p></li>
+</ul>
+<p>This is useful for <strong>city-level weather summaries</strong>.</p>
+<br>
+<hr>
+</div>
+<div id="count-and-sum-aggregations" class="section level2">
+<h2>Count and Sum Aggregations</h2>
+<p>We can also calculate <strong>counts and sums</strong>. For example,
+total precipitation per city:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> <span class="bu">sum</span>, count</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>precip_summary <span class="op">=</span> weather.groupBy(<span class="st">&quot;city_location_identifier__up_to_9_alphanumeric_characters_&quot;</span>).agg(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="bu">sum</span>(<span class="st">&quot;precipitation_integer_in_hundredths_of_a_millimeter___liquid_equivalent____0__is_used_for_trace_amounts_and___1__is_used_for_no_precipitation&quot;</span>).alias(<span class="st">&quot;total_precip&quot;</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    count(<span class="st">&quot;valid_date_as_yyyymmdd&quot;</span>).alias(<span class="st">&quot;days_recorded&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>).orderBy(<span class="st">&quot;total_precip&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>display(precip_summary)</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><code>sum()</code> calculates total precipitation per
+city</p></li>
+<li><p><code>count()</code> counts the number of days recorded per
+city</p></li>
+<li><p>This helps identify <strong>cities with the most
+precipitation</strong> or <strong>data completeness</strong></p></li>
+</ul>
+<br>
+<hr>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>Aggregation in PySpark allows you to:</p>
+<ul>
+<li><p><strong>Summarize numeric data</strong> using sum, average, min,
+max</p></li>
+<li><p><strong>Combine grouping with aggregation</strong> for
+multi-level summaries</p></li>
+<li><p><strong>Quickly explore large datasets</strong> to extract
+meaningful insights</p></li>
+</ul>
+<p>This is especially useful for <strong>reporting, dashboards, and
+statistical analysis</strong>.</p>
+<br>
+<hr>
+<p>More aggregation functions you might want run into:</p>
+<ul>
+<li><p><strong><code>countDistinct()</code></strong> – Counts the number
+of <strong>unique values</strong> in a column.</p></li>
+<li><p><strong><code>first()</code> / <code>last()</code></strong> –
+Returns the <strong>first or last value</strong> in a column within a
+group.</p></li>
+<li><p><strong><code>collect_list()</code></strong> – Collects all
+values from a column into a <strong>list</strong> for each
+group.</p></li>
+<li><p><strong><code>collect_set()</code></strong> – Collects
+<strong>unique values</strong> into a set for each group.</p></li>
+<li><p><strong><code>variance()</code> / <code>var_samp()</code> /
+<code>var_pop()</code></strong> – Calculates <strong>variance</strong>
+for a column (sample or population).</p></li>
+<li><p><strong><code>stddev()</code> / <code>stddev_samp()</code> /
+<code>stddev_pop()</code></strong> – Calculates <strong>standard
+deviation</strong> for a column.</p></li>
+<li><p><strong><code>skewness()</code></strong> – Measures
+<strong>asymmetry</strong> of a distribution.</p></li>
+<li><p><strong><code>kurtosis()</code></strong> – Measures the
+<strong>tailedness</strong> of a distribution.</p></li>
+<li><p><strong><code>approx_count_distinct()</code></strong> – Estimates
+the number of distinct items efficiently for <strong>very large
+datasets</strong>.</p></li>
+<li><p><strong><code>sumDistinct()</code></strong> – Sums
+<strong>distinct values</strong> only, ignoring duplicates.</p></li>
+<li><p>And many more that can’t be listed here.</p></li>
+</ul>
+<br>
+<hr>
+<footer>
+</footer>
+</div>
+
+
+<footer class="site-footer">
+  <div class="footer-left">
+    <p>
+      PySpark Notebook - Guide for using PySpark in collaboration with Databricks and Dewey Data<br>
+      Copyright © 2026 Data Science Department, Brigham Young University Idaho
+    </p>
+
+    <p>
+      This program is free software: you can redistribute it and/or modify  
+      it under the terms of the GNU General Public License as published by  
+      the Free Software Foundation, either version 3 of the License, or  
+      (at your option) any later version.
+    </p>
+
+    <p>
+      This program is distributed in the hope that it will be useful,  
+      but WITHOUT ANY WARRANTY; without even the implied warranty of  
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+      See the GNU General Public License for more details.
+    </p>
+  </div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+---
+title: "Windowing"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr>
+
+## Window Functions in PySpark
+
+Window functions allow us to **perform calculations across sets of rows related to the current row**.\
+Unlike aggregations, window functions **don’t collapse rows**, so you can compute things like:
+
+-   Running totals
+-   Differences between current and previous rows
+-   Rankings within a group
+-   Moving averages
+
+Windowing is especially useful for **time series data** or **grouped comparisons**, where context matters.
+
+<br><hr>
+
+## Example Dataset
+
+In the following examples we will use a sample dataset from **Dewey Data**.
+
+To follow along: 
+
+1. Go to **Dewey Data**
+
+2. Download **Airline Employment Data By WARN Database** 
+
+3. Place the file in your project's **data folder**
+
+If you need help downloading datasets, see the tutorial section:
+
+[How to Get Dewey Data Sample Sets](index.html#dewey-data-anchor)
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+head(read.csv("data/airline-employment-data-sample.csv")) |>
+  kable() |>
+  kable_styling(
+    bootstrap_options = c("striped","hover")
+  ) |>
+  scroll_box(width = "100%")
+```
+
+This displays the **first few rows**, letting us see column names and understand the dataset structure.
+
+<br><hr>
+
+
+## Loading the Data in PySpark
+
+Before filtering, we first load the dataset into a **Spark DataFrame**.
+
+```{python}
+#| eval: false
+import pyspark as ps
+from pyspark.sql.functions import col
+
+warn = spark.read.csv("data/airline-employment-data-sample.csv", header=True, inferSchema=True)
+
+display(warn)
+
+```
+
+The `display()` function allows us to **visually inspect the dataset**.
+
+<br><hr>
+
+## Setting Up a Window
+
+A window defines:
+
+-   **Partitioning:** which group each row belongs to (e.g., `carrier_name`)
+
+-   **Ordering:** how rows are sorted within the partition (e.g., `month_date_parsed`)
+
+-   **Frame:** which rows are included in the calculation (default is all rows up to the current row)
+
+```{python}
+#| eval: false
+from pyspark.sql.window import Window
+
+# Partition by airline and order by month
+windowSpec = Window.partitionBy("carrier_name").orderBy("month_date_parsed")
+
+```
+
+**Explanation:**
+
+-   `partitionBy("carrier_name")` creates separate groups for each airline.
+
+-   `orderBy("month_date_parsed")` ensures calculations consider the temporal order of rows.
+
+<br><hr>
+
+## Calculating Previous Month Full-Time Employees (`lag`)
+
+We can use `lag()` to get the value of a column from the previous row in the window.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import lag
+
+airline_lag = airline.withColumn(
+    "prev_full_time",
+    lag("full_time").over(windowSpec)
+)
+
+display(airline_lag.select("carrier_name", "month_date_parsed", "full_time", "prev_full_time"))
+
+```
+
+**Explanation:**
+
+-   `lag("full_time")` retrieves the previous row's `full_time` value for each airline.
+
+-   Useful to **see month-to-month changes** without aggregating rows.
+
+<br><hr>
+
+## Calculating Change in Full-Time Employees
+
+We can subtract the previous month’s value from the current month to calculate **change in full-time employees**.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import col
+
+airline_change = airline_lag.withColumn(
+    "full_time_change",
+    col("full_time") - col("prev_full_time")
+)
+
+display(airline_change.select("carrier_name", "month_date_parsed", "full_time", "prev_full_time", "full_time_change"))
+
+```
+
+**Explanation:**
+
+-   `full_time_change` shows **growth or reduction** in employees for each airline.
+
+-   This helps analyze trends **over time**.
+
+<br><hr>
+
+## Running Total of Employees
+
+Windowing can also calculate a **cumulative sum** of full-time employees over months.
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import sum
+
+airline_cumsum = airline.withColumn(
+    "cumulative_full_time",
+    sum("full_time").over(windowSpec)
+)
+
+display(airline_cumsum.select("carrier_name", "month_date_parsed", "full_time", "cumulative_full_time"))
+
+```
+
+**Explanation:**
+
+-   `sum("full_time").over(windowSpec)` keeps a **running total** for each airline.
+
+-   Running totals are useful for **tracking long-term trends** without collapsing the dataset.
+
+<br><hr>
+
+## Ranking Airlines by Month
+
+Windowing also allows **ranking within a partition**.\
+For example, rank airlines by total employees **each month**:
+
+```{python}
+#| eval: false
+from pyspark.sql.functions import rank, desc
+
+month_window = Window.partitionBy("month_date_parsed").orderBy(desc("full_time"))
+
+airline_rank = airline.withColumn(
+    "rank_full_time",
+    rank().over(month_window)
+)
+
+display(airline_rank.select("carrier_name", "month_date_parsed", "full_time", "rank_full_time"))
+
+```
+
+**Explanation:**
+
+-   `rank()` assigns a rank to each airline **within the same month**, highest `full_time` first.
+
+-   Useful for **leaderboards or identifying top contributors**.
+
+<br><hr>
+
+## Summary
+
+Window functions in PySpark let you **analyze data in context**:
+
+-   `lag` / `lead` – compare rows within a group
+
+-   `sum`, `avg` – running totals or moving averages
+
+-   `rank`, `dense_rank` – rank rows within a group
+
+-   Works with **partitions** to calculate **group-wise metrics** without collapsing rows
+
+Windowing is essential for **time series, trend analysis, and group-based insights**.
+
+<br><hr>
+
+<footer></footer>
+ 

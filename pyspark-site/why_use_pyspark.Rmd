@@ -1,0 +1,123 @@
+---
+title: "Why Use PySpark?"
+output: 
+  html_document: 
+    toc_float: true
+    toc: true
+---
+
+<hr/>
+
+*PySpark is designed for working with large datasets efficiently. It allows data scientists and engineers to process data across many machines, making it possible to analyze datasets that would be too large for traditional tools.*
+
+<br>
+
+<hr/>
+
+## Why Use PySpark?
+
+<div style="padding-left:15px;">
+
+PySpark is the Python interface for Apache Spark, a powerful framework built for large-scale data processing. It allows users to write Python code while taking advantage of Spark’s distributed computing engine.
+
+When datasets become too large for tools like pandas or traditional scripts, PySpark provides a way to process that data efficiently across multiple machines. This makes it a common tool in data engineering, big data analytics, and large-scale machine learning workflows.
+
+</div>
+
+<br />
+<hr />
+
+## Handling Big Data
+
+<div style="padding-left:15px;">
+
+One of the main reasons to use PySpark is its ability to handle **very large datasets**. Tools like pandas store data in memory on a single machine, which limits the size of data you can work with.
+
+PySpark distributes data across multiple machines in a cluster, allowing it to process datasets that are much larger than what a single computer can handle.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Loading Large Data
+
+<div style="padding-left:15px;">
+
+This example shows how PySpark can load a large dataset as a distributed DataFrame.
+
+```{python}
+#| eval: false
+df = spark.read.csv("large_dataset.csv", header=True, inferSchema=True)
+```
+
+Instead of loading the entire dataset into memory on one machine, Spark distributes the data and processes it in parallel.
+
+</div>
+
+<br />
+<hr />
+
+## Speed Through Distributed Processing
+
+<div style="padding-left:15px;">
+
+PySpark improves performance by using **distributed processing**. Instead of one CPU processing all the data, Spark splits the data into partitions and processes them simultaneously across multiple cores or machines.
+
+This parallel processing can dramatically reduce the time required for large computations.
+
+</div>
+
+<br />
+<hr />
+
+## Example: Parallel Computation
+
+<div style="padding-left:15px;">
+
+This example groups data and counts rows by category. Spark distributes the work across partitions so the computation runs in parallel.
+
+```{python}
+#| eval: false
+result = df.groupBy("category").count()
+
+result.show()
+```
+
+Even for large datasets, Spark can perform these operations efficiently by distributing the workload.
+
+</div>
+
+<br />
+<hr />
+
+## Scalability
+
+<div style="padding-left:15px;">
+
+Another major advantage of PySpark is **scalability**. As your data grows, you can add more machines to a Spark cluster to handle the additional workload.
+
+This allows systems built with Spark to grow alongside the size of the data without requiring major changes to the code.
+
+</div>
+
+<br />
+<hr />
+
+## PySpark vs Pandas
+
+<div style="padding-left:15px;">
+
+PySpark and pandas are both powerful tools for working with data, but they are designed for different scales of problems.
+
+- **pandas** works best for small to medium datasets that fit comfortably in memory on one machine.
+- **PySpark** is designed for very large datasets that need distributed processing.
+
+Because of this, many workflows start with pandas for exploration and then switch to PySpark when working with production-scale data.
+
+</div>
+
+<br />
+<hr />
+
+<footer></footer>
