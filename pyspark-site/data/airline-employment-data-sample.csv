@@ -1,0 +1,101 @@
+carrier_group,carrier_name,full_time,month_date,month_date_parsed,part_time,total
+Major,Alaska,"19,273",Oct 2025,2025-10-01,"2,322","21,595"
+Major,Allegiant Air,"5,364",Oct 2025,2025-10-01,958,"6,322"
+Major,American,"96,547",Oct 2025,2025-10-01,"12,016","108,563"
+Major,Atlas Air,"4,281",Oct 2025,2025-10-01,53,"4,334"
+Major,Delta,"103,018",Oct 2025,2025-10-01,"1,468","104,486"
+Major,Envoy Air,"12,971",Oct 2025,2025-10-01,"6,835","19,806"
+Major,Federal Express,"238,121",Oct 2025,2025-10-01,"237,293","475,414"
+Major,Frontier,"7,423",Oct 2025,2025-10-01,48,"7,471"
+Major,Hawaiian,"6,657",Oct 2025,2025-10-01,628,"7,285"
+Major,JetBlue,"18,747",Oct 2025,2025-10-01,"3,097","21,844"
+Major,Kalitta Air,"3,339",Oct 2025,2025-10-01,14,"3,353"
+Major,Polar Air Cargo,8,Oct 2025,2025-10-01,0,8
+Major,Republic Airline,"6,202",Oct 2025,2025-10-01,247,"6,449"
+Major,SkyWest,"13,576",Oct 2025,2025-10-01,"1,895","15,471"
+Major,Southwest,"71,176",Oct 2025,2025-10-01,"2,580","73,756"
+Major,Spirit,"9,486",Oct 2025,2025-10-01,340,"9,826"
+Major,Sun Country Airlines,"2,304",Oct 2025,2025-10-01,950,"3,254"
+Major,USA Jet,143,Oct 2025,2025-10-01,0,143
+Major,United,"93,280",Oct 2025,2025-10-01,"18,422","111,702"
+Major,United Parcel Service,"7,099",Oct 2025,2025-10-01,64,"7,163"
+National,ABX Air Inc,624,Oct 2025,2025-10-01,6,630
+National,Air Transport International,"1,211",Oct 2025,2025-10-01,0,"1,211"
+National,Air Wisconsin,220,Oct 2025,2025-10-01,22,242
+National,Aloha Air Cargo,360,Oct 2025,2025-10-01,71,431
+National,Amerijet International,787,Oct 2025,2025-10-01,0,787
+National,Breeze Aviation Group DBA Breeze,"1,855",Oct 2025,2025-10-01,745,"2,600"
+National,CommuteAir dba CommuteAir,"1,149",Oct 2025,2025-10-01,3,"1,152"
+National,Endeavor Air,"4,948",Oct 2025,2025-10-01,71,"5,019"
+National,Global Crossing,657,Oct 2025,2025-10-01,32,689
+National,GoJet Airlines,"1,254",Oct 2025,2025-10-01,0,"1,254"
+National,Horizon Air,"2,724",Oct 2025,2025-10-01,"1,138","3,862"
+National,Jet Aviation Flight Services,930,Oct 2025,2025-10-01,0,930
+National,Lynden Air Cargo,203,Oct 2025,2025-10-01,0,203
+National,Mesa,"1,495",Oct 2025,2025-10-01,2,"1,497"
+National,National Air Cargo Group Inc d/ba National,561,Oct 2025,2025-10-01,0,561
+National,Northern Air Cargo,260,Oct 2025,2025-10-01,5,265
+National,Omni Air International,896,Oct 2025,2025-10-01,2,898
+National,PSA,"4,971",Oct 2025,2025-10-01,0,"4,971"
+National,Piedmont,"5,869",Oct 2025,2025-10-01,"4,700","10,569"
+National,Scott Aviation,106,Oct 2025,2025-10-01,0,106
+National,Sky Lease Cargo,148,Oct 2025,2025-10-01,12,160
+National,TEM Enterprises dba Avelo,883,Oct 2025,2025-10-01,127,"1,010"
+Large Regional,21 Air,275,Oct 2025,2025-10-01,0,275
+Large Regional,Asia Pacific,90,Oct 2025,2025-10-01,1,91
+Large Regional,Caribbean Sun Airlines,170,Oct 2025,2025-10-01,71,241
+Large Regional,Eastern,164,Oct 2025,2025-10-01,0,164
+Large Regional,Eastern Air Express (EAX),375,Oct 2025,2025-10-01,0,375
+Large Regional,Gulf And Caribbean Cargo,137,Oct 2025,2025-10-01,0,137
+Large Regional,KaiserAir,39,Oct 2025,2025-10-01,29,68
+Large Regional,Kalitta Charters II,169,Oct 2025,2025-10-01,0,169
+Large Regional,Tatonduk Outfitters Limited,298,Oct 2025,2025-10-01,32,330
+Medium Regional,Polaris Aviation Solutions,38,Oct 2025,2025-10-01,15,53
+Medium Regional,Sierra Pacific,16,Oct 2025,2025-10-01,30,46
+Major,Alaska,"19,199",Sep 2025,2025-09-01,"2,345","21,544"
+Major,Allegiant Air,"5,364",Sep 2025,2025-09-01,"1,013","6,377"
+Major,American,"96,060",Sep 2025,2025-09-01,"11,720","107,780"
+Major,Atlas Air,"4,309",Sep 2025,2025-09-01,55,"4,364"
+Major,Delta,"103,064",Sep 2025,2025-09-01,"1,403","104,467"
+Major,Envoy Air,"12,892",Sep 2025,2025-09-01,"6,800","19,692"
+Major,Federal Express,"235,832",Sep 2025,2025-09-01,"223,922","459,754"
+Major,Frontier,"7,510",Sep 2025,2025-09-01,49,"7,559"
+Major,Hawaiian,"6,651",Sep 2025,2025-09-01,619,"7,270"
+Major,JetBlue,"18,781",Sep 2025,2025-09-01,"3,102","21,883"
+Major,Kalitta Air,"3,321",Sep 2025,2025-09-01,14,"3,335"
+Major,Polar Air Cargo,19,Sep 2025,2025-09-01,0,19
+Major,Republic Airline,"6,195",Sep 2025,2025-09-01,250,"6,445"
+Major,SkyWest,"13,598",Sep 2025,2025-09-01,"1,879","15,477"
+Major,Southwest,"70,958",Sep 2025,2025-09-01,"2,530","73,488"
+Major,Spirit,"9,576",Sep 2025,2025-09-01,333,"9,909"
+Major,Sun Country Airlines,"2,314",Sep 2025,2025-09-01,965,"3,279"
+Major,USA Jet,144,Sep 2025,2025-09-01,0,144
+Major,United,"92,552",Sep 2025,2025-09-01,"18,487","111,039"
+Major,United Parcel Service,"7,087",Sep 2025,2025-09-01,65,"7,152"
+National,ABX Air Inc,637,Sep 2025,2025-09-01,6,643
+National,Air Transport International,"1,213",Sep 2025,2025-09-01,0,"1,213"
+National,Air Wisconsin,225,Sep 2025,2025-09-01,23,248
+National,Amerijet International,786,Sep 2025,2025-09-01,0,786
+National,Breeze Aviation Group DBA Breeze,"1,853",Sep 2025,2025-09-01,708,"2,561"
+National,CommuteAir dba CommuteAir,"1,161",Sep 2025,2025-09-01,3,"1,164"
+National,Endeavor Air,"4,906",Sep 2025,2025-09-01,71,"4,977"
+National,Global Crossing,667,Sep 2025,2025-09-01,51,718
+National,GoJet Airlines,"1,196",Sep 2025,2025-09-01,0,"1,196"
+National,Horizon Air,"2,697",Sep 2025,2025-09-01,"1,102","3,799"
+National,Jet Aviation Flight Services,923,Sep 2025,2025-09-01,0,923
+National,Lynden Air Cargo,206,Sep 2025,2025-09-01,0,206
+National,Mesa,"1,565",Sep 2025,2025-09-01,4,"1,569"
+National,National Air Cargo Group Inc d/ba National,561,Sep 2025,2025-09-01,0,561
+National,Omni Air International,906,Sep 2025,2025-09-01,2,908
+National,PSA,"4,944",Sep 2025,2025-09-01,0,"4,944"
+National,Piedmont,"5,667",Sep 2025,2025-09-01,"4,754","10,421"
+National,Sky Lease Cargo,146,Sep 2025,2025-09-01,12,158
+National,TEM Enterprises dba Avelo,865,Sep 2025,2025-09-01,124,989
+National,Western Global,302,Sep 2025,2025-09-01,0,302
+Large Regional,21 Air,267,Sep 2025,2025-09-01,0,267
+Large Regional,Asia Pacific,88,Sep 2025,2025-09-01,1,89
+Large Regional,Caribbean Sun Airlines,170,Sep 2025,2025-09-01,73,243
+Large Regional,Eastern,182,Sep 2025,2025-09-01,0,182
+Large Regional,Eastern Air Express (EAX),363,Sep 2025,2025-09-01,0,363
+Large Regional,Gulf And Caribbean Cargo,137,Sep 2025,2025-09-01,0,137
+Large Regional,KaiserAir,39,Sep 2025,2025-09-01,29,68

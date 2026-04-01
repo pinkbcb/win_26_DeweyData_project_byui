@@ -1,0 +1,101 @@
+city,closure_layoff,company,county,effective_date,industry,notes,number_of_workers,region,state,temporary_permanent,unions,warn_received_date
+Statewide,None,Nordstrom Card Services,None,None,None,None,15,None,Utah,None,None,2026-02-21
+Clackamas,Large Layoff - 10 or more workers,Vacuum Technique LLC,None,04/30/2026-06/30/2026,None,9415,78,None,Oregon,None,None,2025-12-31
+Johnson City,Layoff,"US Endodontics, LLC",Washington,2/27/26,None,#202500025,70,None,Tennessee,Permanent,None,2025-12-30
+Atlanta,Permanent Layoff / Reduction in Force,The Coca-Cola Company,Fulton,2/28/25,None,GA202500061,75,None,Georgia,None,None,2025-12-30
+Deposit,Layoff - Temporary,"Crockett & Sons Concrete, Inc.",None,12/26/25,238110,"61 Marian Drive Port Deposit, MD 21904",4,Susquehanna,Maryland,None,None,2025-12-29
+Fayette,Closure,"Eagle Machining - First Brands Group, LLC",Fulton,02/27/2026-03/31/2026,None,007-25-87,251,None,Ohio,Permanent,UAW Local 1181,2025-12-29
+Fort Worth,None,FedEx Corporation Facility,Tarrant,3/2/26,None,None,89,North Central Texas WDA,Texas,None,None,2025-12-29
+Dallas,None,"Televista, Inc.",Tarrant,2/28/26,None,None,110,Tarrant County WDA,Texas,None,None,2025-12-29
+Bellevue,Layoff,Doosan GridTech,None,2/27/26,None,None,24,None,Washington,Permanent,None,2025-12-29
+North Charleston,Closure,"WeDriveU, Inc.",Charleston,2/28/26,None,"3664 Leeds Ave., North Charleston, SC 29405",194,None,South Carolina,Permanent,None,2025-12-28
+3025 E. Dominguez St. Carson CA 90810,Layoff Not known at this time,Fullstack Modular LLC,Los Angeles County,2/23/26,31-33 Manufacturing,None,200,None,California,None,None,2025-12-24
+Medford,Large Layoff - 10 or more workers,"Solgen Power, LLC dba Purelight Power",None,12/23/2025-12/26/2025,None,9414,109,None,Oregon,None,None,2025-12-23
+Indianapolis,Closure,AAR Aircraft Services,None,2/15/26,31-33,Manufacturing,329,None,Indiana,None,None,2025-12-23
+Montgomery,Layoff,Montgomery UPS,None,2/23/26,None,None,128,None,Alabama,None,None,2025-12-23
+Ankeny,Closing,"Solgen Power, LLC, d/b/a Purelight Power",Polk,12/23/25,Construction,None,29,Central Iowa,Iowa,None,None,2025-12-23
+Farmington Hills,Closure,Mercedes-Benz Financial Services USA LLC,Oakland,12/31/25,None,None,265,None,Michigan,Permanent,None,2025-12-23
+500 Main Street Chester CA 96020,Layoff Temporary,Collins Pine Company,Plumas County,2/20/26,31-33 Manufacturing,None,79,None,California,None,None,2025-12-23
+5200 Illumina Way San Diego CA 92122,Layoff Permanent,"Illumina, Inc.",San Diego County,12/22/25,54 Professional Scientific and Technical Services,None,1,None,California,None,None,2025-12-23
+Richmond,Closure,Railcrew Xpress (RCX),None,2/27/26,None,None,26,Central,Virginia,None,None,2025-12-22
+"Newport News, Portsmouth",Closure,Railcrew Xpress (RCX),None,2/27/26,None,None,29,Eastern,Virginia,None,None,2025-12-22
+Statewide,Closure,Railcrew Xpress,Statewide,2/27/26,None,"101 Armour Rd., Suite B, North Kansas City, MO 64116",58,None,South Carolina,Permanent,None,2025-12-22
+"Augusta, Fitzgerald, Savannah, Thomasville, Waycross",Permanent Closure,"Railcrew Xpress, LLC","Augusta, Ben Hill, Chatham, Thomas, Ware",2/27/26,None,GA202500060,55,None,Georgia,None,None,2025-12-22
+Jacksonville,Closure,Railcrew Xpress,None,2/27/26,Transportation and Warehousing,None,34,None,Florida,Permanent,None,2025-12-22
+Miami,Closure,Railcrew Xpress,None,2/27/26,Transportation and Warehousing,None,4,None,Florida,Permanent,None,2025-12-22
+Mulberry,Closure,Railcrew Xpress,None,2/27/26,Transportation and Warehousing,None,24,None,Florida,Permanent,None,2025-12-22
+Orlando,Closure,Railcrew Xpress,None,2/27/26,Transportation and Warehousing,None,7,None,Florida,Permanent,None,2025-12-22
+Tampa,Closure,Railcrew Xpress,None,2/27/26,Transportation and Warehousing,None,10,None,Florida,Permanent,None,2025-12-22
+Wildwood,Closure,Railcrew Xpress,None,2/27/26,Transportation and Warehousing,None,3,None,Florida,Permanent,None,2025-12-22
+Dallas,None,ABM Texas General Services (SMU),Dallas,3/12/25,None,None,211,Dallas County WDA,Texas,None,None,2025-12-22
+Raleigh,Closure,Railcrew Xpress (RCX),Wake,2/27/26,None,None,2,None,North Carolina,Permanent,None,2025-12-22
+Rocky Mount,Closure,Railcrew Xpress (RCX),Edgecomb,2/27/26,None,None,27,None,North Carolina,Permanent,None,2025-12-22
+Hamlet,Closure,Railcrew Xpress (RCX),Richmond,2/27/26,None,None,25,None,North Carolina,Permanent,None,2025-12-22
+Bethel,Closure,Railcrew Xpress (RCX),Pitt,2/27/26,None,None,2,None,North Carolina,Permanent,None,2025-12-22
+Fayetteville,Closure,Railcrew Xpress (RCX),Cumberland,2/27/26,None,None,7,None,North Carolina,Permanent,None,2025-12-22
+Leland,Closure,Railcrew Xpress (RCX),Brunswick,2/27/26,None,None,4,None,North Carolina,Permanent,None,2025-12-22
+Charlotte,Closure,Railcrew Xpress (RCX),Mecklenburg,2/27/26,None,None,18,None,North Carolina,Permanent,None,2025-12-22
+Bostic,Closure,Railcrew Xpress (RCX),Rutherford,2/27/26,None,None,2,None,North Carolina,Permanent,None,2025-12-22
+Gainesville,Permanent Closure,Gainesville Jaycees Vocational Rehabilitation Center,Hall,2/27/26,None,GA202500059,19,None,Georgia,None,None,2025-12-22
+Tampa,Closure,Ideal Image,None,2/20/26,Health Care and Social Assistance,None,255,None,Florida,Permanent,None,2025-12-22
+None,Layoff,Moveret,Hardin,12/31/25,None,None,90,Lincoln Trail,Kentucky,None,None,2025-12-19
+Baltimore,Plant Closure,"Value Village Thrift Stores, Inc.",None,2/21/26,459510,"3424 Eastern Avenue Baltimore, MD 21224",30,Baltimore,Maryland,None,None,2025-12-19
+Baltimore,Plant Closure,"Value Village Thrift Stores, Inc.",None,2/21/26,459510,"3702 Bank Street Baltimore, MD 21224",9,Baltimore,Maryland,None,None,2025-12-19
+Edgewood,Plant Closure,"Value Village Thrift Stores, Inc.",None,2/21/26,459510,"1955 Pulaski Highway Edgewood, MD 21040",42,Susquehanna,Maryland,None,None,2025-12-19
+Laurel,Plant Closure,"Thrift Stores of Washington, D. C.",None,2/21/26,459510,"9880 Washington Blvd Laurel, MD 20723",41,Howard,Maryland,None,None,2025-12-19
+Waldorf,Plant Closure,"Value Village Thrift Stores, Inc.",None,2/21/26,459510,"2100 Crain Highway Waldorf, MD 20601",25,Southern Maryland,Maryland,None,None,2025-12-19
+Marshfield,Facility Closure,Prince Corporation,Wood,2/19/26,General Freight Trucking Long Distance TL,None,80,North Central,Wisconsin,None,None,2025-12-19
+Memphis,Closure,Archer Daniels Midland Company,Shelby,1/30/26,None,#202500024,95,None,Tennessee,Permanent,None,2025-12-19
+Wilmington,None,"Smyth Companies, LLC",None,03/01/2026-07/01/2026,None,None,69,Boston,Massachusetts,None,None,2025-12-19
+777 South Santa Fe Avenue. Los Angeles CA 90021,Layoff Permanent,Warner Music Inc.,Los Angeles County,2/16/26,71 Arts Entertainment and Recreation,None,5,None,California,None,None,2025-12-18
+Poplar Bluff,Layoff,Saint Francis Healthcare,Butler,1/30/26,Healthcare,None,213,Southeast,Missouri,None,None,2025-12-18
+None,Closure,Battelle Memorial Institute E3,Madison,2/18/26,541715,None,17,Bluegrass,Kentucky,None,None,2025-12-17
+Waldorf,Plant Closure,The Charleston Senior Community,None,2/14/26,623312,"45 St. Patrick�s Drive Waldorf, MD 20603",74,Charles County,Maryland,None,None,2025-12-17
+"Crandall, Chatsworth",Permanent Closure,Comprehensive Logistics,Murray,3/7/26,None,GA202500058,105,None,Georgia,None,None,2025-12-17
+490 F Street Lemoore CA 93245,Closure Permanent,Leprino Foods Company,Kings County,12/30/26,31-33 Manufacturing,None,100,None,California,None,None,2025-12-17
+None,Closure,Blue Oval SK Group/Battery Plant,Hardin,2/14/26,335911,None,"1,514",Lincoln Trail,Kentucky,None,None,2025-12-16
+Rockville,Mass Layoff - No Recall,General Dynamics Information Technology,None,2/13/26,541330,"5600-5601 Fishers Lane Rockville, MD 20852",54,Montgomery County,Maryland,None,None,2025-12-16
+The Rock,Permanent Closure,"Quad/Graphics, Inc.",Upson,12/19/2025-04/11/2026,None,GA202500057,241,None,Georgia,None,None,2025-12-16
+Garner,Layoff,"I Squared Logistics, LLC",Wake,12/15/25,None,None,160,None,North Carolina,Permanent,None,2025-12-16
+Wilmington,None,"*Updated* Charles River Laboratories, Inc.",None,01/06/2026-06/26/2026,None,None,71,Boston,Massachusetts,None,None,2025-12-16
+None,Closure,PARSONS CORPORATION,Madison,1/16/26,541330,None,32,Bluegrass,Kentucky,None,None,2025-12-15
+None,Closure,Thyssenkrupp,Boone,2/13/26,332991,None,77,Northern Kentucky,Kentucky,None,Yes,2025-12-15
+New Lexington,Closure,Cooper Standard,Perry,02/06/2026-07/01/2026,None,014-25-86,228,None,Ohio,Permanent,UAW Local 1686,2025-12-15
+Honolulu,Closure,JINYA Hawaii. inc. (dba JINYA Ramen Bar � Honolulu),None,2/9/26,None,None,86,None,Hawaii,Permanent,None,2025-12-15
+Webberville,Closure,"C3 Industries, Inc.",Ingham,2/14/26,None,None,62,None,Michigan,Permanent,None,2025-12-15
+Fort Myers,Closure,Avanti Installation,None,2/15/26,Manufacturing,None,19,None,Florida,Permanent,None,2025-12-15
+Medley,Closure,Avanti Installation,None,2/15/26,Manufacturing,None,14,None,Florida,Permanent,None,2025-12-15
+West Palm Beach,Closure,Avanti Installation,None,2/15/26,Manufacturing,None,19,None,Florida,Permanent,None,2025-12-15
+1363 Citrus Avenue Riverside CA 92507,Layoff Permanent,"Primo Brands, Inc.",Riverside County,2/13/25,31-33 Manufacturing,None,2,None,California,None,None,2025-12-15
+1522 North Newhope Street Santa Ana CA 92703,Layoff Permanent,"Primo Brands, Inc.",Orange County,2/13/26,31-33 Manufacturing,None,1,None,California,None,None,2025-12-15
+2000 E El Segundo Blvd El Segundo CA 90245,Layoff Permanent,Raytheon,Los Angeles County,2/13/25,54 Professional Scientific and Technical Services,None,1,None,California,None,None,2025-12-15
+221 E Alondra Boulevard Gardena CA 90248,Layoff Permanent,"Primo Brands, Inc.",Los Angeles County,2/13/26,31-33 Manufacturing,None,1,None,California,None,None,2025-12-15
+"Seattle, Bellevue",Layoff,Amazon,None,2/2/26,None,None,84,None,Washington,Permanent,None,2025-12-13
+Coralville,Mass Layoff,Integrated DNA Technologies,Johnson,12/12/25,Manufacturing,None,61,East Central Iowa,Iowa,None,None,2025-12-12
+Madrid,Closing,Continental Manufacturing Chemist,Boone,12/15/25,Manufacturing,None,18,Central Iowa,Iowa,None,None,2025-12-12
+Muncie,Closure,Spartech LLC,None,12/23/25,325211,Plastics Material and Resin Manufacturing,125,None,Indiana,None,None,2025-12-12
+Muncie,Closure,Spartech LLC,None,12/23/25,325211,Plastics Material and Resin Manufacturing,125,None,Indiana,None,None,2025-12-12
+Coralville,Mass Layoff,Integrated DNA Technologies,Johnson,12/12/25,Manufacturing,None,61,East Central Iowa,Iowa,None,None,2025-12-12
+Madrid,Closing,Continental Manufacturing Chemist,Boone,12/15/25,Manufacturing,None,18,Central Iowa,Iowa,None,None,2025-12-12
+Manassas,Closure,Giant Delivers,None,2/10/26,None,None,90,Northern,Virginia,None,Teamsters Local 639; UFCW Local 400,2025-12-12
+5200 Illumina Way San Diego CA 92122,Layoff Permanent,"Illumina, Inc.",San Diego County,12/8/25,54 Professional Scientific and Technical Services,None,7,None,California,None,None,2025-12-12
+3101 Busch Drive Fairfield CA 94534,Closure Permanent,"Anheuser-Busch Commercial Strategy, LLC",Solano County,2/9/26,31-33 Manufacturing,None,238,None,California,None,None,2025-12-12
+Wallula,Closure,Packaging Corporation of America,None,2/9/26,None,None,200,None,Washington,Permanent,Association of Western Pulp and Paper Workers Local No. 69,2025-12-11
+Findlay,Closure,Michigan Sugar Company,Hancock,1/31/26,None,007-25-85,4,None,Ohio,Permanent,BCTGM Local 19,2025-12-11
+Waipahu,Ownership Transfer,5 Minute Pharmacy LLC,None,2/14/26,None,all employees to be offered terms of reemployment,81,None,Hawaii,None,None,2025-12-11
+Ringgold,Closure,AeroFarms,None,12/19/25,None,None,173,Western,Virginia,None,None,2025-12-11
+64125 19th Avenue Desert Hot Springs CA 92240,Closure Permanent,"G&C Staffing, LLC (Gold Flora)",Riverside County,2/10/26,56 Administrative and Support and Waste Management and Remediation,None,12,None,California,None,None,2025-12-11
+130 Baytech Drive San Jose CA 95134,Closure Permanent,"bioMerieux, Inc.",Santa Clara County,4/3/26,42 Wholesale Trade,None,121,None,California,None,None,2025-12-11
+1695 S 7th Street San Jose CA 95112,Closure Permanent,"G&C Staffing, LLC (Gold Flora) (1695 S 7th Street)",Santa Clara County,2/10/26,56 Administrative and Support and Waste Management and Remediation,None,36,None,California,None,None,2025-12-11
+1190 Coleman Avenue San Jose CA 95110,Closure Permanent,"G&C Staffing, LLC (Gold Flora) (1190 Coleman Avenue)",Santa Clara County,2/10/26,56 Administrative and Support and Waste Management and Remediation,None,6,None,California,None,None,2025-12-11
+2811 Orchard Pkwy San Jose CA 95134,Closure Permanent,Zebra Technologies Corporation,Santa Clara County,2/9/26,31-33 Manufacturing,None,75,None,California,None,None,2025-12-11
+Orange City,Closing,"Medtec, LLC DBA CQ Medical",Sioux,2/6/26,Manufacturing,None,33,Iowa Plains,Iowa,None,None,2025-12-10
+Richardson,None,LeeMAH Electronics. Inc.,Dallas,12/8/25,None,None,84,Dallas County WDA,Texas,None,None,2025-12-10
+Irving,None,S&S Activewear,Dallas,12/4/25,None,None,146,Dallas County WDA,Texas,None,None,2025-12-10
+Orange City,Closing,"Medtec, LLC DBA CQ Medical",Sioux,2/6/26,Manufacturing,None,33,Iowa Plains,Iowa,None,None,2025-12-10
+Portland,None,Charter Communications,None,None,None,"901 Washington Ave Portland, Maine 04103",176,4,Maine,None,None,2025-12-10
+2125 Butano Drive Sacramento CA 95825,Layoff Permanent,Wells Fargo,Sacramento County,2/6/26,52 Finance and Insurance,None,114,None,California,None,None,2025-12-10
+1802 C Street Sacramento CA 95811,Closure Permanent,Blue Diamond Growers,Sacramento County,9/1/25,31-33 Manufacturing,None,1,None,California,None,None,2025-12-10
+3200 E Carson St. Lakewood CA 90712,Closure Permanent,AARP,Los Angeles County,1/9/26,81 Other Services Except Public Administration,None,18,None,California,None,None,2025-12-10
+West Des Moines,Amendment - Additional Employees,Wells Fargo,Polk,2/6/26,Finance and Insurance,None,25,Central Iowa,Iowa,None,None,2025-12-09
+Portland,Reduction,Wells Fargo,None,2/6/26,None,9408,3,None,Oregon,None,None,2025-12-09
